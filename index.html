@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <style>
-    /* ===== DESIGN TOKENS ===== */
+    /* ===== DESIGN TOKENS — DARK (default) ===== */
     :root {
       --primary: hsl(205, 90%, 42%);
       --primary-light: hsl(195, 85%, 55%);
@@ -28,16 +28,67 @@
       --shadow: 0 20px 60px rgba(0,0,0,0.5);
       --radius: 20px;
       --radius-sm: 12px;
+      --nav-bg: rgba(5, 12, 28, 0.85);
+      --footer-bg: hsl(220,35%,4%);
     }
 
+    /* ===== DESIGN TOKENS — LIGHT ===== */
+    html.light {
+      --primary: hsl(205, 85%, 38%);
+      --primary-light: hsl(195, 80%, 42%);
+      --primary-dark: hsl(215, 75%, 28%);
+      --accent: hsl(185, 90%, 36%);
+      --gold: hsl(42, 95%, 48%);
+      --bg-dark: hsl(210, 40%, 97%);
+      --bg-card: hsl(210, 30%, 100%);
+      --bg-card2: hsl(210, 25%, 94%);
+      --text-primary: hsl(220, 35%, 12%);
+      --text-secondary: hsl(220, 20%, 38%);
+      --text-muted: hsl(220, 15%, 55%);
+      --border: hsl(210, 20%, 84%);
+      --glass: rgba(0,0,0,0.04);
+      --glass-border: rgba(0,0,0,0.09);
+      --shadow: 0 20px 60px rgba(0,100,180,0.12);
+      --nav-bg: rgba(255, 255, 255, 0.88);
+      --footer-bg: hsl(210, 30%, 93%);
+    }
+
+    /* Light mode specific overrides */
+    html.light body { background: var(--bg-dark); }
+    html.light nav { background: var(--nav-bg) !important; border-bottom-color: var(--border); }
+    html.light .hero-bg {
+      background:
+        radial-gradient(ellipse at 30% 50%, hsla(205,90%,55%,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 30%, hsla(185,100%,55%,0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 100%, hsla(215,80%,80%,0.2) 0%, transparent 60%);
+    }
+    html.light .hero-glow { background: radial-gradient(circle, hsla(200,80%,60%,0.1) 0%, transparent 70%); }
+    html.light footer { background: var(--footer-bg) !important; }
+    html.light #booking { background: linear-gradient(135deg, hsl(210,35%,92%) 0%, hsl(205,30%,95%) 100%) !important; }
+    html.light #products { background: linear-gradient(180deg, transparent, hsla(210,30%,90%,0.5), transparent) !important; }
+    html.light #services { background: var(--bg-card) !important; }
+    html.light #reviews { background: var(--bg-card) !important; }
+    html.light .service-card { background: rgba(0,100,180,0.04); border-color: rgba(0,100,180,0.1); }
+    html.light .service-card:hover { background: rgba(0,120,200,0.08); border-color: rgba(0,120,200,0.25); }
+    html.light .review-card { background: var(--bg-dark); }
+    html.light ::-webkit-scrollbar-track { background: var(--bg-dark); }
+    html.light #particles-canvas { opacity: 0.12; }
+    html.light .hero-badge { background: rgba(0,100,200,0.07); border-color: rgba(0,100,200,0.15); }
+    html.light .btn-secondary { background: rgba(0,0,0,0.06); border-color: rgba(0,0,0,0.12); color: var(--text-primary); }
+    html.light .btn-secondary:hover { background: rgba(0,0,0,0.1); }
+    html.light .whatsapp-ping { border-color: var(--bg-dark); }
+    html.light #neighborhood-list { background: #fff !important; border-color: rgba(0,120,200,0.3) !important; }
+    html.light #neighborhood-list li { color: hsl(220,35%,12%) !important; }
+
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; transition: background 0.4s; }
     body {
       font-family: 'Cairo', sans-serif;
       background: var(--bg-dark);
       color: var(--text-primary);
       overflow-x: hidden;
       line-height: 1.7;
+      transition: background 0.4s, color 0.4s;
     }
     img { display: block; width: 100%; height: 100%; object-fit: cover; }
     a { text-decoration: none; color: inherit; }
@@ -58,10 +109,30 @@
       position: sticky; top: 0; z-index: 100;
       display: flex; align-items: center; justify-content: space-between;
       padding: 1rem 3rem;
-      background: rgba(5, 12, 28, 0.85);
+      background: var(--nav-bg);
       backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
       border-bottom: 1px solid var(--glass-border);
+      transition: background 0.4s;
     }
+
+    /* Theme toggle button */
+    .theme-toggle {
+      width: 52px; height: 28px;
+      background: var(--border); border-radius: 50px;
+      border: none; cursor: pointer; position: relative;
+      transition: background 0.4s; flex-shrink: 0;
+      outline: none;
+    }
+    html.light .theme-toggle { background: var(--primary); }
+    .theme-toggle-thumb {
+      position: absolute; top: 3px; right: 3px;
+      width: 22px; height: 22px; border-radius: 50%;
+      background: white; transition: transform 0.35s cubic-bezier(.4,0,.2,1), background 0.3s;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; line-height: 1;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    }
+    html.light .theme-toggle-thumb { transform: translateX(-24px); }
     .nav-logo { display: flex; align-items: center; gap: 0.75rem; }
     .logo-icon {
       width: 48px; height: 48px;
@@ -464,6 +535,9 @@
     <li><a href="#used-ac">مستعمل</a></li>
     <li><a href="https://wa.me/966568192263" target="_blank" class="nav-cta">📞 تواصل معنا</a></li>
   </ul>
+  <button class="theme-toggle" id="theme-toggle" aria-label="تبديل الوضع الداكن/الفاتح" title="تبديل المظهر">
+    <div class="theme-toggle-thumb" id="theme-thumb">🌙</div>
+  </button>
 </nav>
 
 <!-- HERO -->
@@ -958,6 +1032,32 @@
     positionDropdown();
     neighborhoodList.style.display = 'block';
   }
+
+  // ===== Theme Toggle =====
+  const themeToggle = document.getElementById('theme-toggle');
+  const themeThumb  = document.getElementById('theme-thumb');
+  const html = document.documentElement;
+
+  function applyTheme(isLight) {
+    if (isLight) {
+      html.classList.add('light');
+      themeThumb.textContent = '☀️';
+    } else {
+      html.classList.remove('light');
+      themeThumb.textContent = '🌙';
+    }
+  }
+
+  // Load saved preference
+  const savedTheme = localStorage.getItem('naseem-theme');
+  applyTheme(savedTheme === 'light');
+
+  themeToggle.addEventListener('click', () => {
+    const isLight = !html.classList.contains('light');
+    applyTheme(isLight);
+    localStorage.setItem('naseem-theme', isLight ? 'light' : 'dark');
+  });
+
 </script>
 </body>
 </html>
