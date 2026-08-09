@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>نسيم برو | متجر تكييف الهواء</title>
+  <meta name="description" content="نسيم برو - متجر متخصص في بيع وشراء وصيانة وغسيل مكيفات الهواء. أفضل الأسعار وأفضل الخدمات في المنطقة." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    /* ===== DESIGN TOKENS ===== */
+    :root {
+      --primary: hsl(205, 90%, 42%);
+      --primary-light: hsl(195, 85%, 55%);
+      --primary-dark: hsl(215, 80%, 30%);
+      --accent: hsl(185, 100%, 42%);
+      --gold: hsl(42, 100%, 60%);
+      --bg-dark: hsl(220, 30%, 6%);
+      --bg-card: hsl(220, 25%, 10%);
+      --bg-card2: hsl(220, 22%, 13%);
+      --text-primary: hsl(210, 30%, 95%);
+      --text-secondary: hsl(210, 15%, 70%);
+      --text-muted: hsl(210, 10%, 50%);
+      --border: hsl(210, 20%, 18%);
+      --glass: rgba(255,255,255,0.06);
+      --glass-border: rgba(255,255,255,0.10);
+      --shadow: 0 20px 60px rgba(0,0,0,0.5);
+      --radius: 20px;
+      --radius-sm: 12px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-primary);
+      overflow-x: hidden;
+      line-height: 1.7;
+    }
+    img { display: block; width: 100%; height: 100%; object-fit: cover; }
+    a { text-decoration: none; color: inherit; }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-dark); }
+    ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 3px; }
+
+    /* Particles */
+    #particles-canvas {
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none; z-index: 0; opacity: 0.3;
+    }
+
+    /* Navbar */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 3rem;
+      background: rgba(5, 12, 28, 0.85);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--glass-border);
+    }
+    .nav-logo { display: flex; align-items: center; gap: 0.75rem; }
+    .logo-icon {
+      width: 48px; height: 48px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border-radius: 12px; display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; box-shadow: 0 4px 20px rgba(0,168,232,0.4);
+    }
+    .logo-text { font-size: 1.5rem; font-weight: 800; }
+    .logo-text span { color: var(--accent); }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      color: var(--text-secondary); font-weight: 600; font-size: 0.95rem;
+      transition: color 0.3s; position: relative;
+    }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: -4px; right: 0;
+      width: 0; height: 2px; background: var(--accent); transition: width 0.3s;
+    }
+    .nav-links a:hover { color: var(--text-primary); }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-cta {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: white !important; padding: 0.5rem 1.5rem; border-radius: 50px;
+      font-weight: 700; transition: transform 0.3s, box-shadow 0.3s !important;
+      box-shadow: 0 4px 20px rgba(0,168,232,0.3);
+    }
+    .nav-cta:hover { transform: translateY(-2px) !important; box-shadow: 0 8px 30px rgba(0,168,232,0.5) !important; }
+    .nav-cta::after { display: none !important; }
+
+    /* Hero */
+    .hero {
+      position: relative; z-index: 1;
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      text-align: center; padding: 6rem 2rem; overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse at 30% 50%, hsla(205,90%,42%,0.18) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 30%, hsla(185,100%,42%,0.12) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 100%, hsla(215,80%,20%,0.3) 0%, transparent 60%);
+      z-index: 0;
+    }
+    .hero-glow {
+      position: absolute; width: 600px; height: 600px;
+      background: radial-gradient(circle, hsla(200,90%,50%,0.15) 0%, transparent 70%);
+      border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      animation: pulse-glow 4s ease-in-out infinite;
+    }
+    @keyframes pulse-glow {
+      0%,100% { opacity:0.5; transform:translate(-50%,-50%) scale(1); }
+      50% { opacity:1; transform:translate(-50%,-50%) scale(1.1); }
+    }
+    .hero-content { position: relative; z-index: 1; max-width: 800px; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: var(--glass); border: 1px solid var(--glass-border);
+      backdrop-filter: blur(10px); padding: 0.4rem 1.2rem; border-radius: 50px;
+      font-size: 0.85rem; color: var(--accent); font-weight: 600;
+      margin-bottom: 1.5rem; animation: fadeInDown 0.8s ease both;
+    }
+    .hero h1 {
+      font-size: clamp(2.5rem, 6vw, 5rem); font-weight: 900; line-height: 1.15;
+      margin-bottom: 1.5rem; animation: fadeInUp 0.9s 0.1s ease both;
+    }
+    .hero h1 .highlight {
+      background: linear-gradient(135deg, var(--primary-light), var(--accent));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .hero p {
+      font-size: 1.2rem; color: var(--text-secondary); max-width: 550px;
+      margin: 0 auto 2.5rem; animation: fadeInUp 0.9s 0.2s ease both;
+    }
+    .hero-buttons {
+      display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+      animation: fadeInUp 0.9s 0.3s ease both;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: white; padding: 0.9rem 2.5rem; border-radius: 50px;
+      font-weight: 700; font-size: 1.05rem; font-family: 'Cairo', sans-serif;
+      border: none; cursor: pointer; transition: transform 0.3s, box-shadow 0.3s;
+      box-shadow: 0 8px 30px rgba(0,168,232,0.35);
+    }
+    .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 15px 40px rgba(0,168,232,0.5); }
+    .btn-secondary {
+      background: var(--glass); border: 1px solid var(--glass-border);
+      backdrop-filter: blur(10px); color: var(--text-primary); padding: 0.9rem 2.5rem;
+      border-radius: 50px; font-weight: 700; font-size: 1.05rem;
+      font-family: 'Cairo', sans-serif; cursor: pointer; transition: background 0.3s, transform 0.3s;
+    }
+    .btn-secondary:hover { background: rgba(255,255,255,0.12); transform: translateY(-3px); }
+    .hero-stats {
+      display: flex; justify-content: center; gap: 3rem;
+      margin-top: 4rem; animation: fadeInUp 0.9s 0.4s ease both;
+    }
+    .stat { text-align: center; }
+    .stat-num {
+      font-size: 2.2rem; font-weight: 900;
+      background: linear-gradient(135deg, var(--primary-light), var(--accent));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .stat-label { font-size: 0.85rem; color: var(--text-muted); font-weight: 500; }
+
+    /* Sections */
+    section { position: relative; z-index: 1; padding: 5rem 3rem; }
+    .section-header { text-align: center; margin-bottom: 3.5rem; }
+    .section-tag {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+      color: white; padding: 0.3rem 1rem; border-radius: 50px;
+      font-size: 0.8rem; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 1rem;
+    }
+    .section-title { font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 900; margin-bottom: 0.8rem; }
+    .section-title span {
+      background: linear-gradient(135deg, var(--primary-light), var(--accent));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .section-subtitle { color: var(--text-secondary); font-size: 1.05rem; max-width: 550px; margin: 0 auto; }
+    .divider {
+      width: 60px; height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      border-radius: 2px; margin: 1rem auto 0;
+    }
+
+    /* Products */
+    #products { background: linear-gradient(180deg, transparent, hsla(220,30%,8%,0.8), transparent); }
+    .products-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem; max-width: 1200px; margin: 0 auto;
+    }
+    .product-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden;
+      transition: transform 0.4s cubic-bezier(0.175,0.885,0.32,1.275), box-shadow 0.4s, border-color 0.4s;
+      cursor: pointer;
+    }
+    .product-card:hover {
+      transform: translateY(-10px) scale(1.02);
+      box-shadow: 0 30px 70px rgba(0,168,232,0.2); border-color: var(--primary);
+    }
+    .product-img { height: 240px; overflow: hidden; position: relative; }
+    .product-img img { transition: transform 0.5s ease; }
+    .product-card:hover .product-img img { transform: scale(1.08); }
+    .product-badge {
+      position: absolute; top: 1rem; right: 1rem;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: white; padding: 0.3rem 0.8rem; border-radius: 50px; font-size: 0.8rem; font-weight: 700;
+    }
+    .product-body { padding: 1.5rem; }
+    .product-type { font-size: 0.8rem; color: var(--accent); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.4rem; }
+    .product-name { font-size: 1.3rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .product-desc { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem; }
+    .product-features { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.2rem; }
+    .feature-tag {
+      background: rgba(0,168,232,0.1); border: 1px solid rgba(0,168,232,0.2);
+      color: var(--primary-light); padding: 0.2rem 0.7rem; border-radius: 50px;
+      font-size: 0.78rem; font-weight: 600;
+    }
+    .product-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      border-top: 1px solid var(--border); padding-top: 1rem;
+    }
+    .product-price { font-size: 1.5rem; font-weight: 900; color: var(--accent); }
+    .product-price small { font-size: 0.8rem; color: var(--text-muted); font-weight: 500; }
+    .btn-sm {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: white; padding: 0.5rem 1.2rem; border-radius: 50px;
+      font-size: 0.88rem; font-weight: 700; border: none; cursor: pointer;
+      font-family: 'Cairo', sans-serif; transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .btn-sm:hover { transform: scale(1.05); box-shadow: 0 5px 20px rgba(0,168,232,0.4); }
+
+    /* Services */
+    #services { background: var(--bg-card); }
+    .services-container {
+      max-width: 1200px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center;
+    }
+    .services-img {
+      border-radius: var(--radius); overflow: hidden; height: 500px;
+      position: relative; box-shadow: var(--shadow);
+    }
+    .services-img::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(0,168,232,0.2), transparent); pointer-events: none;
+    }
+    .service-cards { display: flex; flex-direction: column; gap: 1rem; }
+    .service-card {
+      background: var(--glass); border: 1px solid var(--glass-border);
+      border-radius: var(--radius-sm); padding: 1.2rem 1.5rem;
+      display: flex; align-items: center; gap: 1rem;
+      transition: background 0.3s, border-color 0.3s, transform 0.3s;
+    }
+    .service-card:hover { background: rgba(0,168,232,0.08); border-color: rgba(0,168,232,0.3); transform: translateX(-5px); }
+    .service-icon {
+      width: 50px; height: 50px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border-radius: 12px; display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; flex-shrink: 0;
+    }
+    .service-info h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.2rem; }
+    .service-info p { font-size: 0.85rem; color: var(--text-secondary); }
+
+    /* Booking */
+    #booking { background: linear-gradient(135deg, hsla(215,60%,8%,1) 0%, hsla(205,50%,6%,1) 100%); }
+    .booking-wrapper { max-width: 800px; margin: 0 auto; }
+    .booking-form {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 3rem; box-shadow: var(--shadow);
+    }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
+    .form-group.full { grid-column: 1 / -1; }
+    .form-group label { font-size: 0.9rem; font-weight: 700; color: var(--text-secondary); }
+    .form-group label span { color: var(--accent); }
+    .form-control {
+      background: var(--bg-card2); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 0.85rem 1.2rem;
+      color: var(--text-primary); font-family: 'Cairo', sans-serif;
+      font-size: 0.95rem; font-weight: 500; transition: border-color 0.3s, box-shadow 0.3s; width: 100%;
+    }
+    .form-control:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,168,232,0.15); }
+    .form-control option { background: var(--bg-card2); }
+
+    /* Unit type */
+    .unit-type-group { display: flex; gap: 1rem; }
+    .unit-type-option { flex: 1; cursor: pointer; }
+    .unit-type-option input { display: none; }
+    .unit-type-card {
+      display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+      padding: 1.2rem; border: 2px solid var(--border); border-radius: var(--radius-sm);
+      background: var(--bg-card2); transition: border-color 0.3s, background 0.3s, transform 0.3s;
+    }
+    .unit-type-option input:checked + .unit-type-card {
+      border-color: var(--accent); background: rgba(0,210,200,0.08); transform: scale(1.03);
+    }
+    .unit-type-icon { font-size: 2rem; }
+    .unit-type-name { font-weight: 700; font-size: 0.9rem; }
+
+    /* Qty stepper */
+    .quantity-stepper {
+      display: flex; align-items: center; gap: 0;
+      border: 1px solid var(--border); border-radius: var(--radius-sm);
+      overflow: hidden; background: var(--bg-card2);
+    }
+    .qty-btn {
+      width: 48px; height: 48px; background: none; border: none;
+      color: var(--text-primary); font-size: 1.3rem; cursor: pointer;
+      font-family: 'Cairo', sans-serif; transition: background 0.2s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .qty-btn:hover { background: rgba(0,168,232,0.15); }
+    .qty-input {
+      flex: 1; text-align: center; background: none; border: none;
+      border-right: 1px solid var(--border); border-left: 1px solid var(--border);
+      color: var(--text-primary); font-family: 'Cairo', sans-serif;
+      font-size: 1.1rem; font-weight: 700; padding: 0;
+    }
+    .qty-input:focus { outline: none; }
+    .form-submit-area { margin-top: 2rem; text-align: center; }
+    .btn-submit {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: white; padding: 1rem 3rem; border-radius: 50px;
+      font-weight: 800; font-size: 1.1rem; font-family: 'Cairo', sans-serif;
+      border: none; cursor: pointer; transition: transform 0.3s, box-shadow 0.3s;
+      box-shadow: 0 8px 30px rgba(0,168,232,0.35);
+      display: inline-flex; align-items: center; gap: 0.6rem;
+    }
+    .btn-submit:hover { transform: translateY(-3px); box-shadow: 0 15px 40px rgba(0,168,232,0.5); }
+
+    /* Toast */
+    .success-toast {
+      display: none; position: fixed; bottom: 2rem; left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white; padding: 1rem 2rem; border-radius: 50px; font-weight: 700;
+      font-family: 'Cairo', sans-serif; z-index: 999;
+      animation: slideUp 0.4s ease; box-shadow: 0 10px 40px rgba(16,185,129,0.4);
+    }
+    @keyframes slideUp {
+      from { opacity:0; transform:translate(-50%,20px); }
+      to { opacity:1; transform:translate(-50%,0); }
+    }
+
+    /* Reviews */
+    #reviews { background: var(--bg-card); }
+    .reviews-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem; max-width: 1200px; margin: 0 auto;
+    }
+    .review-card {
+      background: var(--bg-dark); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.8rem; position: relative;
+      transition: transform 0.4s, box-shadow 0.4s, border-color 0.4s;
+    }
+    .review-card:hover { transform: translateY(-6px); box-shadow: 0 20px 50px rgba(0,0,0,0.4); border-color: rgba(0,168,232,0.3); }
+    .review-quote { position: absolute; top: 1.2rem; left: 1.5rem; font-size: 3rem; line-height: 1; color: var(--primary); opacity: 0.2; font-family: serif; }
+    .review-stars { display: flex; gap: 0.2rem; margin-bottom: 0.8rem; color: var(--gold); font-size: 1.1rem; }
+    .review-text { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.8; margin-bottom: 1.2rem; }
+    .reviewer { display: flex; align-items: center; gap: 0.8rem; border-top: 1px solid var(--border); padding-top: 1rem; }
+    .reviewer-avatar {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 1rem; flex-shrink: 0;
+    }
+    .reviewer-name { font-weight: 700; font-size: 0.95rem; }
+    .reviewer-role { font-size: 0.8rem; color: var(--text-muted); }
+
+    /* Used AC */
+    .marketplace-grid { display: grid; grid-template-columns: 3fr 2fr; gap: 3rem; max-width: 1200px; margin: 0 auto; align-items: start; }
+    .marketplace-main-img { border-radius: var(--radius); overflow: hidden; height: 380px; margin-bottom: 1.5rem; box-shadow: var(--shadow); position: relative; }
+    .marketplace-main-img::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 50%, rgba(5,12,28,0.7)); }
+    .marketplace-label { position: absolute; bottom: 1.5rem; right: 1.5rem; z-index: 1; background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; padding: 0.5rem 1.2rem; border-radius: 50px; font-weight: 800; font-size: 0.9rem; }
+    .marketplace-mini-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .mini-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 1.2rem; text-align: center; transition: border-color 0.3s, transform 0.3s; }
+    .mini-card:hover { border-color: var(--primary); transform: translateY(-4px); }
+    .mini-card-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+    .mini-card h4 { font-weight: 700; font-size: 0.95rem; margin-bottom: 0.3rem; }
+    .mini-card p { font-size: 0.8rem; color: var(--text-muted); }
+    .marketplace-form { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; position: sticky; top: 6rem; }
+    .marketplace-form h3 { font-size: 1.3rem; font-weight: 800; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.6rem; }
+    .marketplace-form h3 span { color: var(--accent); }
+    .action-tabs { display: flex; border-radius: var(--radius-sm); overflow: hidden; border: 1px solid var(--border); margin-bottom: 1.5rem; }
+    .action-tab { flex: 1; padding: 0.7rem; text-align: center; cursor: pointer; font-family: 'Cairo', sans-serif; font-weight: 700; font-size: 0.9rem; border: none; background: var(--bg-card2); color: var(--text-muted); transition: background 0.3s, color 0.3s; }
+    .action-tab.active { background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; }
+
+    /* WhatsApp Float */
+    .whatsapp-float {
+      position: fixed; bottom: 2rem; left: 2rem; z-index: 999;
+      width: 64px; height: 64px;
+      background: linear-gradient(135deg, #25d366, #128c7e);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; box-shadow: 0 8px 30px rgba(37,211,102,0.5);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .whatsapp-float:hover { transform: scale(1.15) rotate(-5deg); box-shadow: 0 15px 50px rgba(37,211,102,0.65); }
+    .whatsapp-float svg { width: 34px; height: 34px; fill: white; }
+    .whatsapp-tooltip {
+      position: absolute; left: calc(100% + 12px);
+      background: #25d366; color: white; padding: 0.4rem 0.9rem; border-radius: 8px;
+      font-size: 0.85rem; font-weight: 700; font-family: 'Cairo', sans-serif; white-space: nowrap;
+      opacity: 0; transform: translateX(-5px); transition: opacity 0.3s, transform 0.3s; pointer-events: none;
+    }
+    .whatsapp-tooltip::before { content: ''; position: absolute; right: 100%; top: 50%; transform: translateY(-50%); border: 6px solid transparent; border-right-color: #25d366; }
+    .whatsapp-float:hover .whatsapp-tooltip { opacity: 1; transform: translateX(0); }
+    .whatsapp-ping { position: absolute; top: -2px; right: -2px; width: 18px; height: 18px; background: #ff4757; border-radius: 50%; border: 2px solid var(--bg-dark); animation: ping 1.5s ease infinite; }
+    @keyframes ping { 0%,100% { transform:scale(1); opacity:1; } 50% { transform:scale(1.4); opacity:0.6; } }
+
+    /* Footer */
+    footer { position: relative; z-index: 1; background: hsl(220,35%,4%); padding: 3rem; border-top: 1px solid var(--border); text-align: center; }
+    .footer-logo { font-size: 1.8rem; font-weight: 900; margin-bottom: 0.5rem; }
+    .footer-logo span { color: var(--accent); }
+    footer p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem; }
+    .footer-links { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; }
+    .footer-links a { color: var(--text-secondary); font-size: 0.9rem; font-weight: 600; transition: color 0.3s; }
+    .footer-links a:hover { color: var(--accent); }
+    .footer-bottom { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.82rem; }
+
+    /* Animations */
+    @keyframes fadeInUp { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes fadeInDown { from { opacity:0; transform:translateY(-20px); } to { opacity:1; transform:translateY(0); } }
+    .reveal { opacity:0; transform:translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity:1; transform:translateY(0); }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      section { padding: 4rem 1.5rem; }
+      .services-container { grid-template-columns: 1fr; }
+      .services-img { height: 280px; }
+      .marketplace-grid { grid-template-columns: 1fr; }
+      .form-grid { grid-template-columns: 1fr; }
+      .hero-stats { gap: 1.5rem; }
+    }
+    @media (max-width: 600px) {
+      .booking-form { padding: 1.5rem; }
+      .hero h1 { font-size: 2rem; }
+      .hero-stats { flex-wrap: wrap; gap: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="particles-canvas"></canvas>
+
+<!-- NAVBAR -->
+<nav>
+  <div class="nav-logo">
+    <div class="logo-icon">❄️</div>
+    <div class="logo-text">نسيم <span>برو</span></div>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#products">المنتجات</a></li>
+    <li><a href="#services">خدماتنا</a></li>
+    <li><a href="#booking">حجز غسيل</a></li>
+    <li><a href="#reviews">آراء العملاء</a></li>
+    <li><a href="#used-ac">مستعمل</a></li>
+    <li><a href="https://wa.me/966500000000" target="_blank" class="nav-cta">📞 تواصل معنا</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-bg"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-content">
+    <div class="hero-badge">⭐ الرقم 1 في خدمات التكييف</div>
+    <h1>راحتك أولويتنا<br/><span class="highlight">نسيم برو للتكييف</span></h1>
+    <p>متجرك المتكامل لبيع وشراء وصيانة وغسيل مكيفات الهواء بأعلى جودة وأفضل الأسعار في المنطقة</p>
+    <div class="hero-buttons">
+      <button class="btn-primary" onclick="document.getElementById('booking').scrollIntoView({behavior:'smooth'})">📅 احجز خدمة الآن</button>
+      <button class="btn-secondary" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">🛒 تصفح المنتجات</button>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-num">+5,000</div><div class="stat-label">عميل راضٍ</div></div>
+      <div class="stat"><div class="stat-num">+10</div><div class="stat-label">سنوات خبرة</div></div>
+      <div class="stat"><div class="stat-num">98%</div><div class="stat-label">معدل الرضا</div></div>
+      <div class="stat"><div class="stat-num">24/7</div><div class="stat-label">دعم متواصل</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCTS -->
+<section id="products">
+  <div class="section-header reveal">
+    <div class="section-tag">🛍️ منتجاتنا</div>
+    <h2 class="section-title">أفضل <span>المكيفات</span> بأفضل الأسعار</h2>
+    <p class="section-subtitle">نوفر أحدث موديلات مكيفات السبليت والشباك من أشهر الماركات العالمية</p>
+    <div class="divider"></div>
+  </div>
+  <div class="products-grid">
+    <div class="product-card reveal">
+      <div class="product-img">
+        <img src="split_ac_unit_1786245225871.jpg" alt="مكيف سبليت حائطي" />
+        <div class="product-badge">⚡ الأكثر مبيعاً</div>
+      </div>
+      <div class="product-body">
+        <div class="product-type">مكيف سبليت</div>
+        <div class="product-name">سبليت إنفرتر 1.5 طن</div>
+        <div class="product-desc">تكنولوجيا الإنفرتر الحديثة لتوفير الطاقة مع قدرة تبريد استثنائية</div>
+        <div class="product-features">
+          <span class="feature-tag">توفير 60% طاقة</span>
+          <span class="feature-tag">ضوضاء منخفضة</span>
+          <span class="feature-tag">ضمان 3 سنوات</span>
+          <span class="feature-tag">تحكم ذكي</span>
+        </div>
+        <div class="product-footer">
+          <div class="product-price">1,299 ر.س <small>/ مع التركيب</small></div>
+          <button class="btn-sm" onclick="window.open('https://wa.me/966500000000?text=أريد الاستفسار عن مكيف سبليت 1.5 طن','_blank')">اشترِ الآن</button>
+        </div>
+      </div>
+    </div>
+    <div class="product-card reveal">
+      <div class="product-img">
+        <img src="window_ac_unit_1786245234743.jpg" alt="مكيف شباك كلاسيك" />
+        <div class="product-badge">💰 اقتصادي</div>
+      </div>
+      <div class="product-body">
+        <div class="product-type">مكيف شباك</div>
+        <div class="product-name">شباك 2 طن كلاسيك</div>
+        <div class="product-desc">مكيف شباك متين وموثوق بأداء ممتاز ومناسب لجميع الأحجام</div>
+        <div class="product-features">
+          <span class="feature-tag">تبريد سريع</span>
+          <span class="feature-tag">صيانة سهلة</span>
+          <span class="feature-tag">ضمان سنتين</span>
+          <span class="feature-tag">اقتصادي</span>
+        </div>
+        <div class="product-footer">
+          <div class="product-price">799 ر.س <small>/ مع التركيب</small></div>
+          <button class="btn-sm" onclick="window.open('https://wa.me/966500000000?text=أريد الاستفسار عن مكيف شباك 2 طن','_blank')">اشترِ الآن</button>
+        </div>
+      </div>
+    </div>
+    <div class="product-card reveal">
+      <div class="product-img" style="height:240px;background:linear-gradient(135deg,hsl(215,50%,12%),hsl(195,60%,10%));display:flex;align-items:center;justify-content:center;font-size:5rem;">
+        🌬️
+        <div class="product-badge">🆕 جديد</div>
+      </div>
+      <div class="product-body">
+        <div class="product-type">سبليت ذكي</div>
+        <div class="product-name">سبليت WiFi 2.5 طن</div>
+        <div class="product-desc">تحكم بمكيفك من أي مكان عبر تطبيق الهاتف مع تقنية AI للتكيف التلقائي</div>
+        <div class="product-features">
+          <span class="feature-tag">تحكم WiFi</span>
+          <span class="feature-tag">AI ذكي</span>
+          <span class="feature-tag">ضمان 5 سنوات</span>
+          <span class="feature-tag">موفر للطاقة</span>
+        </div>
+        <div class="product-footer">
+          <div class="product-price">1,899 ر.س <small>/ مع التركيب</small></div>
+          <button class="btn-sm" onclick="window.open('https://wa.me/966500000000?text=أريد الاستفسار عن السبليت الذكي 2.5 طن','_blank')">اشترِ الآن</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="services-container">
+    <div class="services-img reveal">
+      <img src="ac_cleaning_service_1786245244936.jpg" alt="فني صيانة وغسيل مكيفات محترف" />
+    </div>
+    <div>
+      <div class="section-header" style="text-align:right;margin-bottom:2rem;">
+        <div class="section-tag">🔧 خدماتنا</div>
+        <h2 class="section-title">خدمات <span>احترافية</span> متكاملة</h2>
+        <p class="section-subtitle" style="margin:0;text-align:right;">فريق من المتخصصين المحترفين لخدمتك على مدار اليوم</p>
+        <div class="divider" style="margin:1rem 0 0;"></div>
+      </div>
+      <div class="service-cards reveal">
+        <div class="service-card"><div class="service-icon">🧼</div><div class="service-info"><h3>غسيل وتنظيف المكيفات</h3><p>غسيل شامل للفلاتر والكويل وجسم الوحدة بمواد معتمدة</p></div></div>
+        <div class="service-card"><div class="service-icon">🔧</div><div class="service-info"><h3>صيانة وإصلاح</h3><p>إصلاح جميع أعطال المكيفات بضمان على قطع الغيار والعمالة</p></div></div>
+        <div class="service-card"><div class="service-icon">🏗️</div><div class="service-info"><h3>تركيب المكيفات</h3><p>تركيب احترافي لجميع أنواع المكيفات مع ضمان التركيب</p></div></div>
+        <div class="service-card"><div class="service-icon">❄️</div><div class="service-info"><h3>تعبئة الغاز</h3><p>تعبئة غاز التبريد بالكميات الصحيحة لأداء مثالي</p></div></div>
+        <div class="service-card"><div class="service-icon">📋</div><div class="service-info"><h3>عقود صيانة دورية</h3><p>عقود سنوية للمنازل والشركات بأسعار مميزة ومتابعة منتظمة</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BOOKING -->
+<section id="booking">
+  <div class="booking-wrapper">
+    <div class="section-header reveal">
+      <div class="section-tag">📅 احجز الآن</div>
+      <h2 class="section-title">احجز خدمة <span>غسيل المكيف</span></h2>
+      <p class="section-subtitle">اختر نوع المكيف وعدد الوحدات وسنتواصل معك لتحديد الموعد المناسب</p>
+      <div class="divider"></div>
+    </div>
+    <div class="booking-form reveal">
+      <form id="booking-form" onsubmit="handleBooking(event)">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="name">الاسم الكامل <span>*</span></label>
+            <input type="text" id="name" class="form-control" placeholder="أدخل اسمك الكامل" required />
+          </div>
+          <div class="form-group">
+            <label for="phone">رقم الجوال <span>*</span></label>
+            <input type="tel" id="phone" class="form-control" placeholder="05xxxxxxxx" required />
+          </div>
+          <div class="form-group full">
+            <label>نوع الوحدة <span>*</span></label>
+            <div class="unit-type-group">
+              <label class="unit-type-option">
+                <input type="radio" name="unit-type" value="split" id="unit-split" checked />
+                <div class="unit-type-card">
+                  <span class="unit-type-icon">🌬️</span>
+                  <span class="unit-type-name">سبليت</span>
+                  <small style="color:var(--text-muted);font-size:0.75rem;">وحدة داخلية وخارجية</small>
+                </div>
+              </label>
+              <label class="unit-type-option">
+                <input type="radio" name="unit-type" value="window" id="unit-window" />
+                <div class="unit-type-card">
+                  <span class="unit-type-icon">🪟</span>
+                  <span class="unit-type-name">شباك</span>
+                  <small style="color:var(--text-muted);font-size:0.75rem;">وحدة واحدة بالشباك</small>
+                </div>
+              </label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="qty-field">عدد الوحدات <span>*</span></label>
+            <div class="quantity-stepper">
+              <button type="button" class="qty-btn" onclick="changeQty(-1)">−</button>
+              <input type="number" class="qty-input" id="qty-field" value="1" min="1" max="20" />
+              <button type="button" class="qty-btn" onclick="changeQty(1)">+</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="date">الموعد المفضل <span>*</span></label>
+            <input type="date" id="date" class="form-control" required />
+          </div>
+          <div class="form-group">
+            <label for="region">المنطقة</label>
+            <select id="region" class="form-control">
+              <option value="">-- اختر المنطقة --</option>
+              <option>الرياض - شمال</option>
+              <option>الرياض - جنوب</option>
+              <option>الرياض - شرق</option>
+              <option>الرياض - غرب</option>
+              <option>جدة</option>
+              <option>مكة المكرمة</option>
+              <option>المدينة المنورة</option>
+              <option>الدمام</option>
+              <option>أخرى</option>
+            </select>
+          </div>
+          <div class="form-group full">
+            <label for="notes">ملاحظات إضافية</label>
+            <textarea id="notes" class="form-control" rows="3" placeholder="أي ملاحظات أو متطلبات خاصة..." style="resize:vertical;"></textarea>
+          </div>
+        </div>
+        <div class="form-submit-area">
+          <button type="submit" class="btn-submit">📅 احجز الخدمة الآن</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section id="reviews">
+  <div class="section-header reveal">
+    <div class="section-tag">⭐ آراء العملاء</div>
+    <h2 class="section-title">ماذا يقول <span>عملاؤنا</span></h2>
+    <p class="section-subtitle">أكثر من 5,000 عميل سعيد يثق بخدمات نسيم برو</p>
+    <div class="divider"></div>
+  </div>
+  <div class="reviews-grid">
+    <div class="review-card reveal">
+      <div class="review-quote">"</div>
+      <div class="review-stars">★★★★★</div>
+      <p class="review-text">خدمة ممتازة جداً! الفني جاء في الوقت المحدد وعمل بكل احترافية. المكيف الآن يعمل كأنه جديد. سأوصي بنسيم برو لكل أهلي وأصحابي بلا تردد.</p>
+      <div class="reviewer"><div class="reviewer-avatar">أ</div><div><div class="reviewer-name">أحمد محمد السالم</div><div class="reviewer-role">عميل منذ 2022 · الرياض</div></div></div>
+    </div>
+    <div class="review-card reveal">
+      <div class="review-quote">"</div>
+      <div class="review-stars">★★★★★</div>
+      <p class="review-text">اشتريت مكيف سبليت وقمت بتركيبه معهم. الأسعار معقولة جداً والخدمة سريعة. الموظفون محترمون ومتعاونون. تجربة رائعة من البداية للنهاية!</p>
+      <div class="reviewer"><div class="reviewer-avatar">م</div><div><div class="reviewer-name">منال عبدالله الحربي</div><div class="reviewer-role">عميلة منذ 2021 · جدة</div></div></div>
+    </div>
+    <div class="review-card reveal">
+      <div class="review-quote">"</div>
+      <div class="review-stars">★★★★★</div>
+      <p class="review-text">عندي 5 مكيفات في الشركة، تعاقدت معهم على صيانة دورية. أفضل قرار اتخذته! لا مشاكل، لا تأخير، وفريقهم محترف ومنظم جداً.</p>
+      <div class="reviewer"><div class="reviewer-avatar">خ</div><div><div class="reviewer-name">خالد عمر الغامدي</div><div class="reviewer-role">صاحب شركة · الدمام</div></div></div>
+    </div>
+    <div class="review-card reveal">
+      <div class="review-quote">"</div>
+      <div class="review-stars">★★★★☆</div>
+      <p class="review-text">اشتريت مكيف مستعمل بسعر ممتاز وكان بحالة جيدة جداً. يستاهل الثقة. الخدمة كانت ممتازة فقط الانتظار كان شوي طويل لكن النتيجة أكثر من رائعة.</p>
+      <div class="reviewer"><div class="reviewer-avatar">ف</div><div><div class="reviewer-name">فاطمة علي الزهراني</div><div class="reviewer-role">عميلة · مكة المكرمة</div></div></div>
+    </div>
+    <div class="review-card reveal">
+      <div class="review-quote">"</div>
+      <div class="review-stars">★★★★★</div>
+      <p class="review-text">تعبئة الغاز كانت بسعر معقول جداً وسريعة. الفني شرح لي كل شيء وأعطاني نصائح مفيدة لصيانة المكيف. شكراً جزيلاً لفريق نسيم برو!</p>
+      <div class="reviewer"><div class="reviewer-avatar">ع</div><div><div class="reviewer-name">عبدالرحمن ناصر القرني</div><div class="reviewer-role">عميل · الرياض</div></div></div>
+    </div>
+    <div class="review-card reveal">
+      <div class="review-quote">"</div>
+      <div class="review-stars">★★★★★</div>
+      <p class="review-text">بعت مكيفي القديم وشريت واحد جديد منهم. الصفقة كانت عادلة والتعامل محترم. نظام البيع والشراء للمستعمل فكرة ذكية توفر وقت ومجهود كبير.</p>
+      <div class="reviewer"><div class="reviewer-avatar">ن</div><div><div class="reviewer-name">نورة سعد العتيبي</div><div class="reviewer-role">عميلة · جدة</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- USED AC -->
+<section id="used-ac">
+  <div class="section-header reveal">
+    <div class="section-tag">♻️ السوق المستعمل</div>
+    <h2 class="section-title">بيع وشراء <span>المكيفات المستعملة</span></h2>
+    <p class="section-subtitle">منصة موثوقة للبيع والشراء بأسعار عادلة مع ضمان الجودة</p>
+    <div class="divider"></div>
+  </div>
+  <div class="marketplace-grid">
+    <div class="reveal">
+      <div class="marketplace-main-img">
+        <img src="used_ac_store_1786245255463.jpg" alt="معرض مكيفات مستعملة" />
+        <div class="marketplace-label">+200 وحدة متاحة الآن</div>
+      </div>
+      <div class="marketplace-mini-cards">
+        <div class="mini-card"><div class="mini-card-icon">✅</div><h4>مضمون 100%</h4><p>كل وحدة مفحوصة ومختبرة قبل البيع</p></div>
+        <div class="mini-card"><div class="mini-card-icon">💵</div><h4>أسعار عادلة</h4><p>تقييم فوري وسعر عادل لمكيفك</p></div>
+        <div class="mini-card"><div class="mini-card-icon">🚚</div><h4>توصيل مجاني</h4><p>توصيل وتركيب مجاني داخل المدينة</p></div>
+        <div class="mini-card"><div class="mini-card-icon">🛡️</div><h4>ضمان 6 أشهر</h4><p>ضمان على الوحدات المستعملة</p></div>
+      </div>
+    </div>
+    <div class="marketplace-form reveal">
+      <h3>🔄 <span>تداول مكيفك</span></h3>
+      <div class="action-tabs">
+        <button class="action-tab active" id="tab-buy" onclick="switchTab('buy')">🛒 أريد الشراء</button>
+        <button class="action-tab" id="tab-sell" onclick="switchTab('sell')">💰 أريد البيع</button>
+      </div>
+      <form id="marketplace-form" onsubmit="handleMarketplace(event)">
+        <div id="buy-fields">
+          <div class="form-group" style="margin-bottom:1rem;"><label for="m-name">الاسم</label><input type="text" id="m-name" class="form-control" placeholder="اسمك الكامل" /></div>
+          <div class="form-group" style="margin-bottom:1rem;"><label for="m-phone">رقم الجوال</label><input type="tel" id="m-phone" class="form-control" placeholder="05xxxxxxxx" /></div>
+          <div class="form-group" style="margin-bottom:1rem;">
+            <label for="m-type">نوع المكيف المطلوب</label>
+            <select id="m-type" class="form-control"><option>سبليت</option><option>شباك</option><option>أي نوع</option></select>
+          </div>
+          <div class="form-group" style="margin-bottom:1.5rem;">
+            <label for="m-capacity">السعة</label>
+            <select id="m-capacity" class="form-control"><option>1 طن</option><option>1.5 طن</option><option>2 طن</option><option>2.5 طن</option><option>3 طن</option><option>+3 طن</option></select>
+          </div>
+        </div>
+        <div id="sell-fields" style="display:none;">
+          <div class="form-group" style="margin-bottom:1rem;"><label for="s-name">الاسم</label><input type="text" id="s-name" class="form-control" placeholder="اسمك الكامل" /></div>
+          <div class="form-group" style="margin-bottom:1rem;"><label for="s-phone">رقم الجوال</label><input type="tel" id="s-phone" class="form-control" placeholder="05xxxxxxxx" /></div>
+          <div class="form-group" style="margin-bottom:1rem;"><label for="s-brand">الماركة والموديل</label><input type="text" id="s-brand" class="form-control" placeholder="مثال: Gree 1.5 طن 2020" /></div>
+          <div class="form-group" style="margin-bottom:1rem;">
+            <label for="s-condition">حالة المكيف</label>
+            <select id="s-condition" class="form-control"><option>ممتازة - يعمل بشكل مثالي</option><option>جيدة جداً - يحتاج صيانة بسيطة</option><option>جيدة - يحتاج إصلاح</option></select>
+          </div>
+          <div class="form-group" style="margin-bottom:1.5rem;"><label for="s-price">السعر المتوقع (ريال)</label><input type="number" id="s-price" class="form-control" placeholder="مثال: 500" /></div>
+        </div>
+        <button type="submit" class="btn-submit" style="width:100%;justify-content:center;font-size:1rem;">📲 أرسل الطلب عبر واتساب</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">نسيم <span>برو</span> ❄️</div>
+  <p>متجرك الأول والموثوق لجميع خدمات تكييف الهواء</p>
+  <div class="footer-links">
+    <a href="#home">الرئيسية</a>
+    <a href="#products">المنتجات</a>
+    <a href="#services">الخدمات</a>
+    <a href="#booking">احجز الآن</a>
+    <a href="#reviews">آراء العملاء</a>
+    <a href="#used-ac">السوق المستعمل</a>
+    <a href="https://wa.me/966500000000" target="_blank">واتساب</a>
+  </div>
+  <div class="footer-bottom"><p>© 2026 نسيم برو. جميع الحقوق محفوظة. | مرخص ومعتمد</p></div>
+</footer>
+
+<!-- WHATSAPP -->
+<a href="https://wa.me/966500000000?text=مرحباً، أريد الاستفسار عن خدماتكم" target="_blank" class="whatsapp-float" id="whatsapp-btn" aria-label="تواصل عبر واتساب">
+  <div class="whatsapp-ping"></div>
+  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+  </svg>
+  <div class="whatsapp-tooltip">تواصل عبر واتساب</div>
+</a>
+
+<div class="success-toast" id="success-toast"></div>
+
+<script>
+  // Particles
+  const canvas = document.getElementById('particles-canvas');
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+  function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+  function createParticles() {
+    particles = [];
+    const count = Math.floor((canvas.width * canvas.height) / 15000);
+    for (let i = 0; i < count; i++) {
+      particles.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, r: Math.random()*2+0.5, dx: (Math.random()-0.5)*0.4, dy: (Math.random()-0.5)*0.4, opacity: Math.random()*0.5+0.1 });
+    }
+  }
+  function drawParticles() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    particles.forEach(p => {
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle = `rgba(100,210,255,${p.opacity})`; ctx.fill();
+      p.x+=p.dx; p.y+=p.dy;
+      if(p.x<0||p.x>canvas.width) p.dx*=-1;
+      if(p.y<0||p.y>canvas.height) p.dy*=-1;
+    });
+    requestAnimationFrame(drawParticles);
+  }
+  resizeCanvas(); createParticles(); drawParticles();
+  window.addEventListener('resize',()=>{ resizeCanvas(); createParticles(); });
+
+  // Scroll Reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Qty Stepper
+  function changeQty(delta) {
+    const input = document.getElementById('qty-field');
+    const val = parseInt(input.value) + delta;
+    if (val >= 1 && val <= 20) input.value = val;
+  }
+
+  // Tabs
+  function switchTab(tab) {
+    document.getElementById('tab-buy').classList.toggle('active', tab==='buy');
+    document.getElementById('tab-sell').classList.toggle('active', tab==='sell');
+    document.getElementById('buy-fields').style.display = tab==='buy'?'block':'none';
+    document.getElementById('sell-fields').style.display = tab==='sell'?'block':'none';
+  }
+
+  // Booking
+  function handleBooking(e) {
+    e.preventDefault();
+    const name = document.getElementById('name').value;
+    const phone = document.getElementById('phone').value;
+    const unitType = document.querySelector('input[name="unit-type"]:checked').value;
+    const qty = document.getElementById('qty-field').value;
+    const date = document.getElementById('date').value;
+    const region = document.getElementById('region').value;
+    const notes = document.getElementById('notes').value;
+    const unitLabel = unitType==='split'?'سبليت':'شباك';
+    const msg = `🌬️ *طلب حجز غسيل مكيف - نسيم برو*\n\n👤 الاسم: ${name}\n📞 الجوال: ${phone}\n🔧 نوع الوحدة: ${unitLabel}\n🔢 عدد الوحدات: ${qty}\n📅 الموعد المفضل: ${date}\n📍 المنطقة: ${region||'غير محدد'}\n📝 ملاحظات: ${notes||'لا يوجد'}`;
+    window.open(`https://wa.me/966500000000?text=${encodeURIComponent(msg)}`, '_blank');
+    showToast('✅ جاري تحويلك إلى واتساب لتأكيد الحجز!');
+    e.target.reset();
+  }
+
+  // Marketplace
+  function handleMarketplace(e) {
+    e.preventDefault();
+    const isBuy = document.getElementById('tab-buy').classList.contains('active');
+    let msg;
+    if (isBuy) {
+      msg = `🛒 *طلب شراء مكيف مستعمل - نسيم برو*\n\n👤 الاسم: ${document.getElementById('m-name').value}\n📞 الجوال: ${document.getElementById('m-phone').value}\n🔧 النوع: ${document.getElementById('m-type').value}\n⚡ السعة: ${document.getElementById('m-capacity').value}`;
+    } else {
+      msg = `💰 *طلب بيع مكيف مستعمل - نسيم برو*\n\n👤 الاسم: ${document.getElementById('s-name').value}\n📞 الجوال: ${document.getElementById('s-phone').value}\n🏷️ الماركة: ${document.getElementById('s-brand').value}\n📊 الحالة: ${document.getElementById('s-condition').value}\n💵 السعر: ${document.getElementById('s-price').value} ريال`;
+    }
+    window.open(`https://wa.me/966500000000?text=${encodeURIComponent(msg)}`, '_blank');
+    showToast('✅ جاري تحويلك إلى واتساب!');
+  }
+
+  // Toast
+  function showToast(msg) {
+    const t = document.getElementById('success-toast');
+    t.textContent = msg; t.style.display = 'block';
+    setTimeout(() => t.style.display = 'none', 3500);
+  }
+
+  // Min date
+  document.getElementById('date').min = new Date().toISOString().split('T')[0];
+</script>
+</body>
+</html>
