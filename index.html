@@ -641,10 +641,9 @@
           </div>
 
           <!-- جدة - إكمال تلقائي مخصص هجائي -->
-          <div class="form-group" style="position:relative;">
+          <div class="form-group">
             <label for="region">جدة (اكتب أو اختر الحي) <span>*</span></label>
             <input type="text" id="region" class="form-control" placeholder="🔍 اكتب أي حرف للبحث عن الحي..." autocomplete="off" required />
-            <ul id="neighborhood-list" style="display:none;position:absolute;top:100%;right:0;left:0;z-index:999;background:#0d1b2e;border:1px solid rgba(255,255,255,0.15);border-radius:12px;max-height:220px;overflow-y:auto;margin-top:4px;padding:6px 0;list-style:none;box-shadow:0 8px 32px rgba(0,0,0,0.5);"></ul>
           </div>
 
           <div class="form-group full">
@@ -658,6 +657,8 @@
       </form>
     </div>
   </div>
+  <!-- قائمة الأحياء خارج كل overflow containers -->
+  <ul id="neighborhood-list" style="display:none;position:fixed;z-index:99999;background:#0d1b2e;border:1px solid rgba(0,168,232,0.4);border-radius:14px;max-height:240px;overflow-y:auto;padding:6px 0;list-style:none;box-shadow:0 12px 40px rgba(0,0,0,0.7);min-width:260px;"></ul>
 </section>
 
 <!-- REVIEWS -->
@@ -903,31 +904,60 @@
   const regionInput = document.getElementById('region');
   const neighborhoodList = document.getElementById('neighborhood-list');
 
+
+
+  regionInput.addEventListener('input', () => {
+    positionDropdown();
+    showSuggestions(regionInput.value);
+  });
+  regionInput.addEventListener('focus', () => {
+    positionDropdown();
+    showSuggestions(regionInput.value || '');
+  });
+  regionInput.addEventListener('blur', () => setTimeout(() => neighborhoodList.style.display = 'none', 250));
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('#region') && !e.target.closest('#neighborhood-list'))
+      neighborhoodList.style.display = 'none';
+  });
+  window.addEventListener('scroll', () => { if (neighborhoodList.style.display !== 'none') positionDropdown(); }, true);
+  window.addEventListener('resize', () => { if (neighborhoodList.style.display !== 'none') positionDropdown(); });
+
+  function positionDropdown() {
+    const rect = regionInput.getBoundingClientRect();
+    neighborhoodList.style.top  = (rect.bottom + 4) + 'px';
+    neighborhoodList.style.right = 'auto';
+    neighborhoodList.style.left  = rect.left + 'px';
+    neighborhoodList.style.width = rect.width + 'px';
+  }
+
   function showSuggestions(val) {
     neighborhoodList.innerHTML = '';
-    if (!val) { neighborhoodList.style.display = 'none'; return; }
-    const filtered = jeddahNeighborhoods.filter(n => n.includes(val));
+    const filtered = val
+      ? jeddahNeighborhoods.filter(n => n.includes(val))
+      : jeddahNeighborhoods;
     if (filtered.length === 0) { neighborhoodList.style.display = 'none'; return; }
     filtered.forEach(n => {
       const li = document.createElement('li');
       li.textContent = n;
-      li.style.cssText = 'padding:10px 16px;cursor:pointer;color:#e2e8f0;font-family:Cairo,sans-serif;font-size:0.95rem;transition:background 0.2s;border-radius:8px;margin:2px 6px;';
-      li.addEventListener('mouseenter', () => li.style.background = 'rgba(0,168,232,0.2)');
+      li.style.cssText = 'padding:11px 18px;cursor:pointer;color:#e2e8f0;font-family:Cairo,sans-serif;font-size:0.95rem;font-weight:500;transition:background 0.15s;border-radius:8px;margin:2px 6px;';
+      li.addEventListener('mouseenter', () => li.style.background = 'rgba(0,168,232,0.25)');
       li.addEventListener('mouseleave', () => li.style.background = 'transparent');
+      li.addEventListener('touchstart', () => li.style.background = 'rgba(0,168,232,0.25)');
       li.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        regionInput.value = n;
+        neighborhoodList.style.display = 'none';
+      });
+      li.addEventListener('touchend', (e) => {
         e.preventDefault();
         regionInput.value = n;
         neighborhoodList.style.display = 'none';
       });
       neighborhoodList.appendChild(li);
     });
+    positionDropdown();
     neighborhoodList.style.display = 'block';
   }
-
-  regionInput.addEventListener('input', () => showSuggestions(regionInput.value));
-  regionInput.addEventListener('focus', () => { if (regionInput.value) showSuggestions(regionInput.value); });
-  regionInput.addEventListener('blur', () => setTimeout(() => neighborhoodList.style.display = 'none', 200));
-  document.addEventListener('click', (e) => { if (!e.target.closest('#region') && !e.target.closest('#neighborhood-list')) neighborhoodList.style.display = 'none'; });
 </script>
 </body>
 </html>
