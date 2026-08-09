@@ -640,68 +640,11 @@
             <input type="date" id="date" class="form-control" required />
           </div>
 
-          <!-- جدة (إكمال تلقائي هجائي لجميع الأحياء) -->
-          <div class="form-group">
+          <!-- جدة - إكمال تلقائي مخصص هجائي -->
+          <div class="form-group" style="position:relative;">
             <label for="region">جدة (اكتب أو اختر الحي) <span>*</span></label>
-            <input type="text" id="region" list="jeddah-neighborhoods" class="form-control" placeholder="🔍 اكتب أي حرف للبحث عن الحي..." required />
-            <datalist id="jeddah-neighborhoods">
-              <option value="أبحر الجنوبية"></option>
-              <option value="أبحر الشمالية"></option>
-              <option value="الأجاويد"></option>
-              <option value="الأندلس"></option>
-              <option value="البساتين"></option>
-              <option value="البغدادية الشرقية"></option>
-              <option value="البغدادية الغربية"></option>
-              <option value="البلد (المدينة القديمة)"></option>
-              <option value="البوادي"></option>
-              <option value="البيعة"></option>
-              <option value="التيسير"></option>
-              <option value="الثغر"></option>
-              <option value="الجامعة"></option>
-              <option value="الجوهرة"></option>
-              <option value="الحمراء"></option>
-              <option value="الحمدانية"></option>
-              <option value="الخمرة"></option>
-              <option value="الربوة"></option>
-              <option value="الرغامة"></option>
-              <option value="الروابي"></option>
-              <option value="الروضة"></option>
-              <option value="الريان"></option>
-              <option value="الرحاب"></option>
-              <option value="الرحيلي"></option>
-              <option value="الزهراء"></option>
-              <option value="السامر"></option>
-              <option value="السلامة"></option>
-              <option value="السليمانية"></option>
-              <option value="الشاطئ"></option>
-              <option value="الشرفية"></option>
-              <option value="الصحيفة"></option>
-              <option value="الصفا"></option>
-              <option value="العزيزية"></option>
-              <option value="العمارية"></option>
-              <option value="الفردوس"></option>
-              <option value="الفيحاء"></option>
-              <option value="الفيصلية"></option>
-              <option value="القريات"></option>
-              <option value="القرينية"></option>
-              <option value="الكورنيش الشمالي"></option>
-              <option value="المحمدية"></option>
-              <option value="المرجان"></option>
-              <option value="المروة"></option>
-              <option value="المنار"></option>
-              <option value="النزهة"></option>
-              <option value="النعيم"></option>
-              <option value="النهضة"></option>
-              <option value="الهنداوية"></option>
-              <option value="الورود"></option>
-              <option value="أم السلم"></option>
-              <option value="بريمان"></option>
-              <option value="بني مالك"></option>
-              <option value="طيبة"></option>
-              <option value="قويزة"></option>
-              <option value="مدائن الفهد"></option>
-              <option value="مشرفة"></option>
-            </datalist>
+            <input type="text" id="region" class="form-control" placeholder="🔍 اكتب أي حرف للبحث عن الحي..." autocomplete="off" required />
+            <ul id="neighborhood-list" style="display:none;position:absolute;top:100%;right:0;left:0;z-index:999;background:#0d1b2e;border:1px solid rgba(255,255,255,0.15);border-radius:12px;max-height:220px;overflow-y:auto;margin-top:4px;padding:6px 0;list-style:none;box-shadow:0 8px 32px rgba(0,0,0,0.5);"></ul>
           </div>
 
           <div class="form-group full">
@@ -943,6 +886,48 @@
 
   // Min date
   document.getElementById('date').min = new Date().toISOString().split('T')[0];
+
+  // ===== إكمال تلقائي أحياء جدة =====
+  const jeddahNeighborhoods = [
+    'أبحر الجنوبية','أبحر الشمالية','الأجاويد','الأمير فواز الجنوبي','الأمير فواز الشمالي',
+    'الأندلس','البساتين','البغدادية الشرقية','البغدادية الغربية','البلد','البوادي','البيعة',
+    'التيسير','الثغر','الجامعة','الجوهرة','الحمراء','الحمدانية','الخالدية','الخمرة',
+    'الربوة','الرحاب','الرحيلي','الرغامة','الروابي','الروضة','الريان','الزهراء',
+    'السامر','السلامة','السليمانية','الشاطئ','الشرفية','الصالحية','الصحيفة','الصفا',
+    'العزيزية','العمارية','الفردوس','الفيحاء','الفيصلية','القريات','القرينية',
+    'الكورنيش الشمالي','المحمدية','المرجان','المروة','المنار','النزهة','النعيم',
+    'النهضة','الهنداوية','الورود','أم السلم','أم حبلين','بريمان','بني مالك',
+    'ذهبان','طيبة','قويزة','مدائن الفهد','مشرفة','وادي مريخ'
+  ].sort((a, b) => a.localeCompare(b, 'ar'));
+
+  const regionInput = document.getElementById('region');
+  const neighborhoodList = document.getElementById('neighborhood-list');
+
+  function showSuggestions(val) {
+    neighborhoodList.innerHTML = '';
+    if (!val) { neighborhoodList.style.display = 'none'; return; }
+    const filtered = jeddahNeighborhoods.filter(n => n.includes(val));
+    if (filtered.length === 0) { neighborhoodList.style.display = 'none'; return; }
+    filtered.forEach(n => {
+      const li = document.createElement('li');
+      li.textContent = n;
+      li.style.cssText = 'padding:10px 16px;cursor:pointer;color:#e2e8f0;font-family:Cairo,sans-serif;font-size:0.95rem;transition:background 0.2s;border-radius:8px;margin:2px 6px;';
+      li.addEventListener('mouseenter', () => li.style.background = 'rgba(0,168,232,0.2)');
+      li.addEventListener('mouseleave', () => li.style.background = 'transparent');
+      li.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        regionInput.value = n;
+        neighborhoodList.style.display = 'none';
+      });
+      neighborhoodList.appendChild(li);
+    });
+    neighborhoodList.style.display = 'block';
+  }
+
+  regionInput.addEventListener('input', () => showSuggestions(regionInput.value));
+  regionInput.addEventListener('focus', () => { if (regionInput.value) showSuggestions(regionInput.value); });
+  regionInput.addEventListener('blur', () => setTimeout(() => neighborhoodList.style.display = 'none', 200));
+  document.addEventListener('click', (e) => { if (!e.target.closest('#region') && !e.target.closest('#neighborhood-list')) neighborhoodList.style.display = 'none'; });
 </script>
 </body>
 </html>
