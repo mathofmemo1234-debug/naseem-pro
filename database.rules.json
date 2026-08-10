@@ -1,0 +1,19 @@
+{
+  "rules": {
+    "offers": {
+      ".read": true,
+      ".write": "auth != null"
+    },
+    "reviews": {
+      ".read": true,
+      ".write": true,
+      "$reviewId": {
+        ".validate": "newData.hasChildren(['name', 'stars', 'text', 'createdAt'])",
+        "name": { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 100" },
+        "stars": { ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 5" },
+        "text": { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 1000" },
+        "approved": { ".write": "auth != null" }
+      }
+    }
+  }
+}
