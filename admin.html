@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>لوحة التحكم | نسيم برو</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary: hsl(205,90%,42%);
+      --primary-light: hsl(195,85%,55%);
+      --accent: hsl(185,100%,42%);
+      --bg-dark: hsl(220,30%,6%);
+      --bg-card: hsl(220,25%,10%);
+      --bg-card2: hsl(220,22%,13%);
+      --text-primary: hsl(210,30%,95%);
+      --text-secondary: hsl(210,15%,70%);
+      --text-muted: hsl(210,10%,50%);
+      --border: hsl(210,20%,18%);
+      --glass: rgba(255,255,255,0.06);
+      --glass-border: rgba(255,255,255,0.10);
+      --shadow: 0 20px 60px rgba(0,0,0,0.5);
+      --radius: 20px;
+      --radius-sm: 12px;
+      --green: hsl(150,80%,40%);
+      --red: hsl(0,75%,55%);
+      --yellow: hsl(42,100%,60%);
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{font-family:'Cairo',sans-serif;background:var(--bg-dark);color:var(--text-primary);min-height:100vh;line-height:1.7;}
+    a{text-decoration:none;color:inherit;}
+
+    /* ===== LOGIN ===== */
+    .login-page {
+      min-height:100vh;display:flex;align-items:center;justify-content:center;
+      background: radial-gradient(ellipse at 30% 50%,hsla(205,90%,42%,0.15) 0%,transparent 60%),
+                  radial-gradient(ellipse at 80% 30%,hsla(185,100%,42%,0.1) 0%,transparent 50%),var(--bg-dark);
+      padding:2rem;
+    }
+    .login-card {
+      background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);
+      padding:3rem;width:100%;max-width:420px;box-shadow:var(--shadow);text-align:center;
+    }
+    .login-logo{font-size:3rem;margin-bottom:1rem;}
+    .login-title{font-size:1.8rem;font-weight:900;margin-bottom:0.5rem;}
+    .login-title span{color:var(--accent);}
+    .login-subtitle{color:var(--text-muted);font-size:0.95rem;margin-bottom:2rem;}
+    .login-input {
+      width:100%;background:var(--bg-card2);border:1px solid var(--border);border-radius:var(--radius-sm);
+      padding:0.9rem 1.2rem;color:var(--text-primary);font-family:'Cairo',sans-serif;font-size:1rem;
+      margin-bottom:1rem;transition:border-color 0.3s;
+    }
+    .login-input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(0,168,232,0.15);}
+    .login-btn {
+      width:100%;padding:1rem;border:none;border-radius:var(--radius-sm);cursor:pointer;
+      background:linear-gradient(135deg,var(--primary),var(--accent));color:white;
+      font-family:'Cairo',sans-serif;font-size:1.1rem;font-weight:800;
+      transition:transform 0.3s,box-shadow 0.3s;box-shadow:0 8px 30px rgba(0,168,232,0.3);
+    }
+    .login-btn:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(0,168,232,0.5);}
+    .login-error{color:var(--red);font-size:0.9rem;margin-top:1rem;display:none;}
+
+    /* ===== DASHBOARD ===== */
+    .dashboard{display:none;}
+    .dash-header {
+      display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;
+      background:rgba(5,12,28,0.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--glass-border);
+      position:sticky;top:0;z-index:100;
+    }
+    .dash-logo{display:flex;align-items:center;gap:0.75rem;}
+    .dash-logo-icon{width:40px;height:40px;background:linear-gradient(135deg,var(--primary),var(--accent));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;}
+    .dash-logo-text{font-size:1.3rem;font-weight:800;}
+    .dash-logo-text span{color:var(--accent);}
+    .dash-user{display:flex;align-items:center;gap:1rem;}
+    .dash-user-name{color:var(--text-secondary);font-size:0.9rem;}
+    .btn-logout {
+      background:rgba(255,75,85,0.15);border:1px solid rgba(255,75,85,0.3);color:var(--red);
+      padding:0.5rem 1.2rem;border-radius:50px;cursor:pointer;font-family:'Cairo',sans-serif;
+      font-weight:700;font-size:0.85rem;transition:background 0.3s;
+    }
+    .btn-logout:hover{background:rgba(255,75,85,0.25);}
+
+    /* Tabs */
+    .dash-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);padding:0 2rem;background:var(--bg-card);}
+    .dash-tab {
+      padding:1rem 2rem;cursor:pointer;font-weight:700;font-size:0.95rem;color:var(--text-muted);
+      border-bottom:3px solid transparent;transition:color 0.3s,border-color 0.3s;
+      font-family:'Cairo',sans-serif;background:none;border-top:none;border-right:none;border-left:none;
+    }
+    .dash-tab:hover{color:var(--text-secondary);}
+    .dash-tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+
+    /* Content */
+    .dash-content{max-width:1000px;margin:2rem auto;padding:0 2rem;}
+    .tab-panel{display:none;}
+    .tab-panel.active{display:block;}
+
+    /* Add Offer Form */
+    .form-card {
+      background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);
+      padding:2rem;margin-bottom:2rem;box-shadow:var(--shadow);
+    }
+    .form-card h3{font-size:1.3rem;font-weight:800;margin-bottom:1.5rem;display:flex;align-items:center;gap:0.5rem;}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;}
+    .form-row.full{grid-template-columns:1fr;}
+    .form-label{font-size:0.85rem;font-weight:700;color:var(--text-secondary);margin-bottom:0.4rem;display:block;}
+    .form-input {
+      width:100%;background:var(--bg-card2);border:1px solid var(--border);border-radius:var(--radius-sm);
+      padding:0.8rem 1rem;color:var(--text-primary);font-family:'Cairo',sans-serif;font-size:0.95rem;
+      transition:border-color 0.3s;
+    }
+    .form-input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(0,168,232,0.15);}
+    textarea.form-input{resize:vertical;min-height:80px;}
+    .btn-add {
+      background:linear-gradient(135deg,var(--primary),var(--accent));color:white;
+      padding:0.8rem 2rem;border:none;border-radius:50px;cursor:pointer;font-family:'Cairo',sans-serif;
+      font-weight:800;font-size:1rem;transition:transform 0.3s,box-shadow 0.3s;
+      box-shadow:0 6px 25px rgba(0,168,232,0.3);
+    }
+    .btn-add:hover{transform:translateY(-2px);box-shadow:0 10px 35px rgba(0,168,232,0.5);}
+
+    /* Items List */
+    .items-list{display:flex;flex-direction:column;gap:1rem;}
+    .item-card {
+      background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);
+      padding:1.5rem;display:flex;align-items:center;gap:1.5rem;
+      transition:border-color 0.3s,transform 0.3s;
+    }
+    .item-card:hover{border-color:rgba(0,168,232,0.3);transform:translateX(-4px);}
+    .item-img{width:80px;height:80px;border-radius:12px;object-fit:cover;background:var(--bg-card2);flex-shrink:0;}
+    .item-info{flex:1;}
+    .item-title{font-weight:800;font-size:1.05rem;margin-bottom:0.3rem;}
+    .item-desc{color:var(--text-secondary);font-size:0.85rem;margin-bottom:0.4rem;}
+    .item-price{color:var(--accent);font-weight:900;font-size:1.1rem;}
+    .item-price .old{text-decoration:line-through;color:var(--text-muted);font-size:0.85rem;font-weight:500;margin-right:0.5rem;}
+    .item-actions{display:flex;gap:0.5rem;flex-shrink:0;}
+    .btn-icon {
+      width:40px;height:40px;border-radius:10px;border:1px solid var(--border);
+      background:var(--bg-card2);color:var(--text-secondary);cursor:pointer;
+      display:flex;align-items:center;justify-content:center;font-size:1.1rem;
+      transition:background 0.3s,border-color 0.3s,color 0.3s;
+    }
+    .btn-icon.delete:hover{background:rgba(255,75,85,0.15);border-color:rgba(255,75,85,0.4);color:var(--red);}
+    .btn-icon.approve:hover{background:rgba(40,200,120,0.15);border-color:rgba(40,200,120,0.4);color:var(--green);}
+
+    /* Review card in admin */
+    .review-admin-card{flex-direction:column;align-items:stretch;}
+    .review-admin-header{display:flex;align-items:center;justify-content:space-between;}
+    .review-stars{color:var(--yellow);font-size:1.1rem;letter-spacing:2px;}
+    .review-name{font-weight:800;font-size:1rem;}
+    .review-text-admin{color:var(--text-secondary);font-size:0.95rem;margin:0.8rem 0;}
+    .review-status{font-size:0.8rem;font-weight:700;padding:0.2rem 0.8rem;border-radius:50px;display:inline-block;}
+    .status-pending{background:rgba(255,200,0,0.15);color:var(--yellow);}
+    .status-approved{background:rgba(40,200,120,0.15);color:var(--green);}
+
+    /* Empty state */
+    .empty-state{text-align:center;padding:4rem 2rem;color:var(--text-muted);}
+    .empty-state .icon{font-size:3rem;margin-bottom:1rem;}
+    .empty-state p{font-size:1rem;}
+
+    /* Toast */
+    .toast {
+      display:none;position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);
+      padding:1rem 2rem;border-radius:50px;font-weight:700;font-family:'Cairo',sans-serif;z-index:999;
+      animation:slideUp 0.4s ease;
+    }
+    .toast.success{background:linear-gradient(135deg,#10b981,#059669);color:white;box-shadow:0 10px 40px rgba(16,185,129,0.4);}
+    .toast.error{background:linear-gradient(135deg,#ef4444,#dc2626);color:white;box-shadow:0 10px 40px rgba(239,68,68,0.4);}
+    @keyframes slideUp{from{opacity:0;transform:translate(-50%,20px);}to{opacity:1;transform:translate(-50%,0);}}
+
+    /* Stats */
+    .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:2rem;}
+    .stat-card {
+      background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);
+      padding:1.5rem;text-align:center;transition:border-color 0.3s;
+    }
+    .stat-card:hover{border-color:rgba(0,168,232,0.3);}
+    .stat-icon{font-size:2rem;margin-bottom:0.5rem;}
+    .stat-number{font-size:2rem;font-weight:900;background:linear-gradient(135deg,var(--primary-light),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .stat-label{font-size:0.85rem;color:var(--text-muted);font-weight:600;}
+
+    @media(max-width:700px){
+      .form-row{grid-template-columns:1fr;}
+      .stats-row{grid-template-columns:1fr;}
+      .dash-header{padding:1rem;}
+      .dash-content{padding:0 1rem;}
+      .dash-tabs{padding:0 1rem;}
+      .dash-tab{padding:0.8rem 1rem;font-size:0.85rem;}
+      .item-card{flex-direction:column;align-items:stretch;}
+      .item-actions{justify-content:flex-end;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== LOGIN SCREEN ===== -->
+<div class="login-page" id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">🔐</div>
+    <div class="login-title">لوحة تحكم <span>نسيم برو</span></div>
+    <div class="login-subtitle">سجّل دخولك لإدارة العروض وآراء العملاء</div>
+    <form id="login-form" onsubmit="handleLogin(event)">
+      <input type="email" class="login-input" id="login-email" placeholder="البريد الإلكتروني" value="admin@naseempro.com" required />
+      <input type="password" class="login-input" id="login-password" placeholder="كلمة المرور" required />
+      <button type="submit" class="login-btn" id="login-btn">🚀 تسجيل الدخول</button>
+    </form>
+    <div class="login-error" id="login-error"></div>
+  </div>
+</div>
+
+<!-- ===== DASHBOARD ===== -->
+<div class="dashboard" id="dashboard">
+  <!-- Header -->
+  <div class="dash-header">
+    <div class="dash-logo">
+      <div class="dash-logo-icon">❄️</div>
+      <div class="dash-logo-text">نسيم <span>برو</span> — لوحة التحكم</div>
+    </div>
+    <div class="dash-user">
+      <span class="dash-user-name" id="user-email"></span>
+      <button class="btn-logout" onclick="handleLogout()">🚪 خروج</button>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="dash-tabs">
+    <button class="dash-tab active" onclick="switchTab('offers')">📢 العروض</button>
+    <button class="dash-tab" onclick="switchTab('reviews')">💬 آراء العملاء</button>
+  </div>
+
+  <!-- Content -->
+  <div class="dash-content">
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-icon">📢</div><div class="stat-number" id="stat-offers">0</div><div class="stat-label">عروض نشطة</div></div>
+      <div class="stat-card"><div class="stat-icon">💬</div><div class="stat-number" id="stat-reviews">0</div><div class="stat-label">آراء معتمدة</div></div>
+      <div class="stat-card"><div class="stat-icon">⏳</div><div class="stat-number" id="stat-pending">0</div><div class="stat-label">بانتظار الموافقة</div></div>
+    </div>
+
+    <!-- OFFERS TAB -->
+    <div class="tab-panel active" id="panel-offers">
+      <div class="form-card">
+        <h3>➕ إضافة عرض جديد</h3>
+        <form id="offer-form" onsubmit="addOffer(event)">
+          <div class="form-row">
+            <div><label class="form-label">عنوان العرض *</label><input type="text" class="form-input" id="offer-title" placeholder="مثال: عرض غسيل 3 مكيفات" required /></div>
+            <div><label class="form-label">رابط الصورة</label><input type="url" class="form-input" id="offer-image" placeholder="https://... (اختياري)" /></div>
+          </div>
+          <div class="form-row full">
+            <div><label class="form-label">وصف العرض *</label><textarea class="form-input" id="offer-desc" placeholder="تفاصيل العرض..." required></textarea></div>
+          </div>
+          <div class="form-row">
+            <div><label class="form-label">السعر الجديد (ريال) *</label><input type="number" class="form-input" id="offer-price" placeholder="350" required /></div>
+            <div><label class="form-label">السعر القديم (ريال)</label><input type="number" class="form-input" id="offer-old-price" placeholder="500 (اختياري)" /></div>
+          </div>
+          <div style="text-align:center;margin-top:1rem;">
+            <button type="submit" class="btn-add">📢 نشر العرض</button>
+          </div>
+        </form>
+      </div>
+      <h3 style="font-size:1.2rem;font-weight:800;margin-bottom:1rem;">📋 العروض الحالية</h3>
+      <div class="items-list" id="offers-list">
+        <div class="empty-state"><div class="icon">📭</div><p>لا توجد عروض حالياً — أضف أول عرض!</p></div>
+      </div>
+    </div>
+
+    <!-- REVIEWS TAB -->
+    <div class="tab-panel" id="panel-reviews">
+      <h3 style="font-size:1.2rem;font-weight:800;margin-bottom:1rem;">💬 آراء العملاء</h3>
+      <div class="items-list" id="reviews-list">
+        <div class="empty-state"><div class="icon">💬</div><p>لا توجد آراء بعد</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+
+<script>
+  // ===== Firebase Config =====
+  const firebaseConfig = {
+    apiKey: "AIzaSyBjXXF051RJhcb7m_vOeUlv_aOk_rOwl5o",
+    authDomain: "naseem-pro.firebaseapp.com",
+    databaseURL: "https://naseem-pro-default-rtdb.firebaseio.com",
+    projectId: "naseem-pro",
+    storageBucket: "naseem-pro.firebasestorage.app",
+    messagingSenderId: "136703047267",
+    appId: "1:136703047267:web:f517c35cee3e5a99a1ea56"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db   = firebase.database();
+
+  // ===== Toast =====
+  function showToast(msg, type='success') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast ' + type;
+    t.style.display = 'block';
+    setTimeout(() => t.style.display = 'none', 3000);
+  }
+
+  // ===== AUTH =====
+  function handleLogin(e) {
+    e.preventDefault();
+    const email = document.getElementById('login-email').value;
+    const pass  = document.getElementById('login-password').value;
+    const btn   = document.getElementById('login-btn');
+    const err   = document.getElementById('login-error');
+    btn.textContent = '⏳ جاري الدخول...';
+    btn.disabled = true;
+    auth.signInWithEmailAndPassword(email, pass)
+      .then(() => { err.style.display='none'; })
+      .catch(error => {
+        err.textContent = '❌ البريد أو كلمة المرور خاطئة';
+        err.style.display = 'block';
+        btn.textContent = '🚀 تسجيل الدخول';
+        btn.disabled = false;
+      });
+  }
+
+  function handleLogout() {
+    auth.signOut();
+  }
+
+  auth.onAuthStateChanged(user => {
+    if (user) {
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'block';
+      document.getElementById('user-email').textContent = user.email;
+      loadOffers();
+      loadReviews();
+    } else {
+      document.getElementById('login-screen').style.display = 'flex';
+      document.getElementById('dashboard').style.display = 'none';
+    }
+  });
+
+  // ===== TABS =====
+  function switchTab(tab) {
+    document.querySelectorAll('.dash-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-' + tab).classList.add('active');
+    event.target.classList.add('active');
+  }
+
+  // ===== OFFERS =====
+  function addOffer(e) {
+    e.preventDefault();
+    const offer = {
+      title: document.getElementById('offer-title').value,
+      description: document.getElementById('offer-desc').value,
+      price: document.getElementById('offer-price').value,
+      oldPrice: document.getElementById('offer-old-price').value || '',
+      imageUrl: document.getElementById('offer-image').value || '',
+      active: true,
+      createdAt: Date.now()
+    };
+    db.ref('offers').push(offer)
+      .then(() => {
+        showToast('✅ تم نشر العرض بنجاح!');
+        document.getElementById('offer-form').reset();
+      })
+      .catch(() => showToast('❌ حدث خطأ', 'error'));
+  }
+
+  function deleteOffer(id) {
+    if (confirm('هل أنت متأكد من حذف هذا العرض؟')) {
+      db.ref('offers/' + id).remove()
+        .then(() => showToast('🗑️ تم حذف العرض'))
+        .catch(() => showToast('❌ حدث خطأ', 'error'));
+    }
+  }
+
+  function loadOffers() {
+    db.ref('offers').orderByChild('createdAt').on('value', snap => {
+      const list = document.getElementById('offers-list');
+      const data = snap.val();
+      if (!data) {
+        list.innerHTML = '<div class="empty-state"><div class="icon">📭</div><p>لا توجد عروض حالياً — أضف أول عرض!</p></div>';
+        document.getElementById('stat-offers').textContent = '0';
+        return;
+      }
+      const entries = Object.entries(data).reverse();
+      document.getElementById('stat-offers').textContent = entries.length;
+      list.innerHTML = entries.map(([id, o]) => `
+        <div class="item-card">
+          ${o.imageUrl ? `<img class="item-img" src="${o.imageUrl}" alt="${o.title}" onerror="this.style.display='none'" />` : '<div class="item-img" style="display:flex;align-items:center;justify-content:center;font-size:2rem;">📢</div>'}
+          <div class="item-info">
+            <div class="item-title">${o.title}</div>
+            <div class="item-desc">${o.description}</div>
+            <div class="item-price">
+              ${o.oldPrice ? `<span class="old">${o.oldPrice} ريال</span>` : ''}
+              ${o.price} ريال
+            </div>
+          </div>
+          <div class="item-actions">
+            <button class="btn-icon delete" title="حذف" onclick="deleteOffer('${id}')">🗑️</button>
+          </div>
+        </div>
+      `).join('');
+    });
+  }
+
+  // ===== REVIEWS =====
+  function approveReview(id) {
+    db.ref('reviews/' + id).update({ approved: true })
+      .then(() => showToast('✅ تم اعتماد الرأي'));
+  }
+
+  function deleteReview(id) {
+    if (confirm('هل أنت متأكد من حذف هذا الرأي؟')) {
+      db.ref('reviews/' + id).remove()
+        .then(() => showToast('🗑️ تم حذف الرأي'));
+    }
+  }
+
+  function loadReviews() {
+    db.ref('reviews').orderByChild('createdAt').on('value', snap => {
+      const list = document.getElementById('reviews-list');
+      const data = snap.val();
+      if (!data) {
+        list.innerHTML = '<div class="empty-state"><div class="icon">💬</div><p>لا توجد آراء بعد</p></div>';
+        document.getElementById('stat-reviews').textContent = '0';
+        document.getElementById('stat-pending').textContent = '0';
+        return;
+      }
+      const entries = Object.entries(data).reverse();
+      let approved = 0, pending = 0;
+      entries.forEach(([,r]) => r.approved ? approved++ : pending++);
+      document.getElementById('stat-reviews').textContent = approved;
+      document.getElementById('stat-pending').textContent = pending;
+
+      list.innerHTML = entries.map(([id, r]) => `
+        <div class="item-card review-admin-card">
+          <div class="review-admin-header">
+            <div>
+              <span class="review-name">${r.name}</span>
+              <span class="review-status ${r.approved ? 'status-approved' : 'status-pending'}">${r.approved ? '✅ معتمد' : '⏳ بانتظار'}</span>
+            </div>
+            <div class="review-stars">${'★'.repeat(r.stars)}${'☆'.repeat(5 - r.stars)}</div>
+          </div>
+          <div class="review-text-admin">"${r.text}"</div>
+          <div class="item-actions" style="justify-content:flex-end;">
+            ${!r.approved ? `<button class="btn-icon approve" title="اعتماد" onclick="approveReview('${id}')">✅</button>` : ''}
+            <button class="btn-icon delete" title="حذف" onclick="deleteReview('${id}')">🗑️</button>
+          </div>
+        </div>
+      `).join('');
+    });
+  }
+</script>
+</body>
+</html>
