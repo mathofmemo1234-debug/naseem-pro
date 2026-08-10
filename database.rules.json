@@ -6,13 +6,15 @@
     },
     "reviews": {
       ".read": true,
-      ".write": true,
+      ".write": "auth != null",
       "$reviewId": {
-        ".validate": "newData.hasChildren(['name', 'stars', 'text', 'createdAt'])",
+        ".write": "!data.exists() && newData.exists()",
+        ".validate": "newData.hasChildren(['name', 'stars', 'text', 'createdAt', 'approved']) && newData.child('approved').val() === false",
         "name": { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 100" },
         "stars": { ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 5" },
         "text": { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 1000" },
-        "approved": { ".write": "auth != null" }
+        "approved": { ".validate": "newData.isBoolean()" },
+        "createdAt": { ".validate": "newData.isNumber()" }
       }
     }
   }
