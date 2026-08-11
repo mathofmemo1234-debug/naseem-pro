@@ -16,6 +16,21 @@
         "approved": { ".validate": "newData.isBoolean()" },
         "createdAt": { ".validate": "newData.isNumber()" }
       }
+    },
+    "products": {
+      ".read": true,
+      ".write": "auth != null",
+      "$productId": {
+        ".validate": "newData.hasChildren(['name', 'type', 'description', 'features', 'price', 'imageUrl', 'createdAt'])",
+        "name": { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 150" },
+        "type": { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 100" },
+        "badge": { ".validate": "newData.isString() && newData.val().length <= 50" },
+        "description": { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 1000" },
+        "features": { ".validate": "newData.isString() && newData.val().length <= 500" },
+        "price": { ".validate": "newData.isNumber()" },
+        "imageUrl": { ".validate": "newData.isString()" },
+        "createdAt": { ".validate": "newData.isNumber()" }
+      }
     }
   }
 }

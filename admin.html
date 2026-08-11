@@ -170,7 +170,7 @@
     @keyframes slideUp{from{opacity:0;transform:translate(-50%,20px);}to{opacity:1;transform:translate(-50%,0);}}
 
     /* Stats */
-    .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:2rem;}
+    .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2rem;}
     .stat-card {
       background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);
       padding:1.5rem;text-align:center;transition:border-color 0.3s;
@@ -226,6 +226,7 @@
   <!-- Tabs -->
   <div class="dash-tabs">
     <button class="dash-tab active" onclick="switchTab('offers')">📢 العروض</button>
+    <button class="dash-tab" onclick="switchTab('products')">📦 المنتجات</button>
     <button class="dash-tab" onclick="switchTab('reviews')">💬 آراء العملاء</button>
   </div>
 
@@ -234,6 +235,7 @@
     <!-- Stats -->
     <div class="stats-row">
       <div class="stat-card"><div class="stat-icon">📢</div><div class="stat-number" id="stat-offers">0</div><div class="stat-label">عروض نشطة</div></div>
+      <div class="stat-card"><div class="stat-icon">📦</div><div class="stat-number" id="stat-products">0</div><div class="stat-label">منتجات نشطة</div></div>
       <div class="stat-card"><div class="stat-icon">💬</div><div class="stat-number" id="stat-reviews">0</div><div class="stat-label">آراء معتمدة</div></div>
       <div class="stat-card"><div class="stat-icon">⏳</div><div class="stat-number" id="stat-pending">0</div><div class="stat-label">بانتظار الموافقة</div></div>
     </div>
@@ -262,6 +264,37 @@
       <h3 style="font-size:1.2rem;font-weight:800;margin-bottom:1rem;">📋 العروض الحالية</h3>
       <div class="items-list" id="offers-list">
         <div class="empty-state"><div class="icon">📭</div><p>لا توجد عروض حالياً — أضف أول عرض!</p></div>
+      </div>
+    </div>
+
+    <!-- PRODUCTS TAB -->
+    <div class="tab-panel" id="panel-products">
+      <div class="form-card">
+        <h3>➕ إضافة منتج جديد</h3>
+        <form id="product-form" onsubmit="addProduct(event)">
+          <div class="form-row">
+            <div><label class="form-label">اسم المنتج *</label><input type="text" class="form-input" id="product-name" placeholder="مثال: سبليت إنفرتر 1.5 طن" required /></div>
+            <div><label class="form-label">نوع المنتج *</label><input type="text" class="form-input" id="product-type" placeholder="مثال: مكيف سبليت" required /></div>
+          </div>
+          <div class="form-row">
+            <div><label class="form-label">شارة المنتج (اختياري)</label><input type="text" class="form-input" id="product-badge" placeholder="مثال: الأكثر مبيعاً" /></div>
+            <div><label class="form-label">صورة المنتج *</label><input type="file" class="form-input" id="product-image-file" accept="image/*" required /></div>
+          </div>
+          <div class="form-row full">
+            <div><label class="form-label">وصف المنتج *</label><textarea class="form-input" id="product-desc" placeholder="وصف تفصيلي للمنتج..." required></textarea></div>
+          </div>
+          <div class="form-row">
+            <div><label class="form-label">المميزات (مفصولة بفاصلة) *</label><input type="text" class="form-input" id="product-features" placeholder="مثال: توفير 60% طاقة, ضوضاء منخفضة, ضمان 3 سنوات" required /></div>
+            <div><label class="form-label">السعر (ريال) *</label><input type="number" class="form-input" id="product-price" placeholder="1299" required /></div>
+          </div>
+          <div style="text-align:center;margin-top:1rem;">
+            <button type="submit" class="btn-add">📦 نشر المنتج</button>
+          </div>
+        </form>
+      </div>
+      <h3 style="font-size:1.2rem;font-weight:800;margin-bottom:1rem;">📋 المنتجات الحالية</h3>
+      <div class="items-list" id="products-list">
+        <div class="empty-state"><div class="icon">📭</div><p>لا توجد منتجات حالياً — أضف أول منتج!</p></div>
       </div>
     </div>
 
@@ -336,6 +369,7 @@
       document.getElementById('dashboard').style.display = 'block';
       document.getElementById('user-email').textContent = user.email;
       loadOffers();
+      loadProducts();
       loadReviews();
     } else {
       document.getElementById('login-screen').style.display = 'flex';
@@ -506,6 +540,85 @@
           <div class="item-actions" style="justify-content:flex-end;">
             ${!r.approved ? `<button class="btn-icon approve" title="اعتماد" onclick="approveReview('${id}')">✅</button>` : ''}
             <button class="btn-icon delete" title="حذف" onclick="deleteReview('${id}')">🗑️</button>
+          </div>
+        </div>
+      `).join('');
+    });
+  }
+
+  // ===== PRODUCTS =====
+  async function addProduct(e) {
+    e.preventDefault();
+    const btn = e.target.querySelector('button[type="submit"]');
+    const originalText = btn.innerHTML;
+    
+    const file = document.getElementById('product-image-file').files[0];
+    if (!file) {
+      showToast('❌ يرجى اختيار صورة للمنتج', 'error');
+      return;
+    }
+
+    btn.innerHTML = '⏳ جاري معالجة الصورة ونشرها...';
+    btn.disabled = true;
+
+    try {
+      // 1. Compress and convert image to Base64
+      const base64Image = await compressImage(file, 600, 0.7);
+
+      // 2. Save product in Database
+      const product = {
+        name: document.getElementById('product-name').value,
+        type: document.getElementById('product-type').value,
+        badge: document.getElementById('product-badge').value || '',
+        description: document.getElementById('product-desc').value,
+        features: document.getElementById('product-features').value,
+        price: Number(document.getElementById('product-price').value),
+        imageUrl: base64Image,
+        createdAt: Date.now()
+      };
+
+      await db.ref('products').push(product);
+      
+      showToast('✅ تم نشر المنتج بنجاح!');
+      document.getElementById('product-form').reset();
+    } catch (error) {
+      console.error(error);
+      showToast('❌ حدث خطأ أثناء المعالجة أو الحفظ', 'error');
+    } finally {
+      btn.innerHTML = originalText;
+      btn.disabled = false;
+    }
+  }
+
+  function deleteProduct(id) {
+    if (confirm('هل أنت متأكد من حذف هذا المنتج؟')) {
+      db.ref('products/' + id).remove()
+        .then(() => showToast('🗑️ تم حذف المنتج'))
+        .catch(() => showToast('❌ حدث خطأ', 'error'));
+    }
+  }
+
+  function loadProducts() {
+    db.ref('products').orderByChild('createdAt').on('value', snap => {
+      const list = document.getElementById('products-list');
+      const data = snap.val();
+      if (!data) {
+        list.innerHTML = '<div class="empty-state"><div class="icon">📭</div><p>لا توجد منتجات حالياً — أضف أول منتج!</p></div>';
+        document.getElementById('stat-products').textContent = '0';
+        return;
+      }
+      const entries = Object.entries(data).reverse();
+      document.getElementById('stat-products').textContent = entries.length;
+      list.innerHTML = entries.map(([id, p]) => `
+        <div class="item-card">
+          ${p.imageUrl ? `<img class="item-img" src="${p.imageUrl}" alt="${p.name}" onerror="this.style.display='none'" />` : '<div class="item-img" style="display:flex;align-items:center;justify-content:center;font-size:2rem;">📦</div>'}
+          <div class="item-info">
+            <div class="item-title">${p.name} <span style="font-size:0.8rem;color:var(--text-muted);font-weight:normal;">(${p.type})</span></div>
+            <div class="item-desc">${p.description}</div>
+            <div class="item-price">${p.price} ريال</div>
+          </div>
+          <div class="item-actions">
+            <button class="btn-icon delete" title="حذف" onclick="deleteProduct('${id}')">🗑️</button>
           </div>
         </div>
       `).join('');

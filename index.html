@@ -640,7 +640,7 @@
     <p class="section-subtitle">نوفر أحدث موديلات مكيفات السبليت والشباك من أشهر الماركات العالمية</p>
     <div class="divider"></div>
   </div>
-  <div class="products-grid">
+  <div class="products-grid" id="products-container">
     <div class="product-card reveal">
       <div class="product-img">
         <img src="split_ac_unit_1786245225871.jpg" alt="مكيف سبليت حائطي" />
@@ -1002,6 +1002,40 @@
             <div class="offer-card-price">
               ${o.oldPrice ? `<span class="old-price">${o.oldPrice} ريال</span>` : ''}
               ${o.price} ريال
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  });
+
+  // ===== Load Dynamic Products =====
+  const defaultProductsHTML = document.getElementById('products-container').innerHTML;
+
+  fbDb.ref('products').orderByChild('createdAt').on('value', snap => {
+    const data = snap.val();
+    const container = document.getElementById('products-container');
+    if (!data || Object.keys(data).length === 0) {
+      container.innerHTML = defaultProductsHTML;
+      return;
+    }
+    const entries = Object.entries(data).reverse();
+    container.innerHTML = entries.map(([id, p]) => {
+      const tags = p.features ? p.features.split(',').map(f => `<span class="feature-tag">${f.trim()}</span>`).join('') : '';
+      return `
+        <div class="product-card reveal visible">
+          <div class="product-img">
+            <img src="${p.imageUrl}" alt="${p.name}" />
+            ${p.badge ? `<div class="product-badge">${p.badge}</div>` : ''}
+          </div>
+          <div class="product-body">
+            <div class="product-type">${p.type}</div>
+            <div class="product-name">${p.name}</div>
+            <div class="product-desc">${p.description}</div>
+            <div class="product-features">${tags}</div>
+            <div class="product-footer">
+              <div class="product-price">${Number(p.price).toLocaleString()} ر.س <small>/ مع التركيب</small></div>
+              <button class="btn-sm" onclick="window.open('https://wa.me/966568192263?text=أريد الاستفسار عن ${encodeURIComponent(p.name)}','_blank')">اشترِ الآن</button>
             </div>
           </div>
         </div>
