@@ -493,6 +493,44 @@
     .footer-links a:hover { color: var(--accent); }
     .footer-bottom { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.82rem; }
 
+    /* Audio Float Button */
+    .audio-float {
+      position: fixed; bottom: 2rem; left: 2rem; width: 60px; height: 60px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(15px);
+      border-radius: 50%;
+      color: var(--text-primary);
+      font-size: 1.5rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 998;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      transition: transform 0.3s, background 0.3s, border-color 0.3s;
+    }
+    .audio-float:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: var(--accent);
+      transform: scale(1.05);
+    }
+    .audio-float.playing {
+      animation: pulse-audio 2s infinite;
+      border-color: var(--accent);
+    }
+    @keyframes pulse-audio {
+      0% { box-shadow: 0 0 0 0 rgba(0, 168, 232, 0.4); }
+      70% { box-shadow: 0 0 0 15px rgba(0, 168, 232, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(0, 168, 232, 0); }
+    }
+    .audio-tooltip {
+      position: absolute; bottom: calc(100% + 12px); left: 0;
+      background: var(--bg-card); border: 1px solid var(--border);
+      color: var(--text-primary); padding: 0.4rem 0.9rem; border-radius: 8px;
+      font-size: 0.8rem; font-weight: 700; font-family: 'Cairo', sans-serif; white-space: nowrap;
+      opacity: 0; transform: translateY(5px); transition: opacity 0.3s, transform 0.3s; pointer-events: none;
+    }
+    .audio-float:hover .audio-tooltip { opacity: 1; transform: translateY(0); }
+
     /* Animations */
     @keyframes fadeInUp { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
     @keyframes fadeInDown { from { opacity:0; transform:translateY(-20px); } to { opacity:1; transform:translateY(0); } }
@@ -955,6 +993,17 @@
   </div>
 </footer>
 
+<!-- BACKGROUND AUDIO -->
+<audio id="bg-audio" loop preload="auto">
+  <source src="bg-music.mp3" type="audio/mpeg">
+</audio>
+
+<!-- AUDIO TOGGLE BUTTON -->
+<button id="audio-toggle-btn" class="audio-float" aria-label="تشغيل الموسيقى">
+  <span class="audio-icon">🔇</span>
+  <span class="audio-tooltip">تشغيل الموسيقى الخلفية 🎵</span>
+</button>
+
 <!-- WHATSAPP -->
 <a href="https://wa.me/966568192263?text=مرحباً، أريد الاستفسار عن خدماتكم في جدة" target="_blank" class="whatsapp-float" id="whatsapp-btn" aria-label="تواصل عبر واتساب">
   <div class="whatsapp-ping"></div>
@@ -1295,6 +1344,43 @@
     applyTheme(isLight);
     localStorage.setItem('naseem-theme', isLight ? 'light' : 'dark');
   });
+
+  // ===== Audio Controller =====
+  const audio = document.getElementById('bg-audio');
+  const audioBtn = document.getElementById('audio-toggle-btn');
+  const audioIcon = audioBtn.querySelector('.audio-icon');
+  let isPlaying = false;
+
+  function toggleAudio() {
+    if (isPlaying) {
+      audio.pause();
+      audioIcon.textContent = '🔇';
+      audioBtn.classList.remove('playing');
+      isPlaying = false;
+    } else {
+      audio.play().then(() => {
+        audioIcon.textContent = '🔊';
+        audioBtn.classList.add('playing');
+        isPlaying = true;
+      }).catch(err => {
+        console.log("Audio play blocked. User interaction required.", err);
+        // Fallback: If blocked, try to play on next click anywhere
+        document.body.addEventListener('click', forcePlayOnce, { once: true });
+      });
+    }
+  }
+
+  function forcePlayOnce() {
+    if (!isPlaying) {
+      audio.play().then(() => {
+        audioIcon.textContent = '🔊';
+        audioBtn.classList.add('playing');
+        isPlaying = true;
+      }).catch(err => console.log("Failed to autoplay on interaction.", err));
+    }
+  }
+
+  audioBtn.addEventListener('click', toggleAudio);
 
 </script>
 </body>
