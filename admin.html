@@ -453,7 +453,7 @@
       document.getElementById('offer-form').reset();
     } catch (error) {
       console.error(error);
-      showToast('❌ حدث خطأ أثناء المعالجة أو الحفظ', 'error');
+      showToast('❌ حدث خطأ: ' + error.message, 'error');
     } finally {
       btn.innerHTML = originalText;
       btn.disabled = false;
@@ -583,7 +583,7 @@
       document.getElementById('product-form').reset();
     } catch (error) {
       console.error(error);
-      showToast('❌ حدث خطأ أثناء المعالجة أو الحفظ', 'error');
+      showToast('❌ حدث خطأ: ' + error.message, 'error');
     } finally {
       btn.innerHTML = originalText;
       btn.disabled = false;
