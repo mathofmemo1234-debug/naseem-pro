@@ -534,7 +534,7 @@
     /* Live Ticker Section */
     #live-ticker-section {
       padding: 0.9rem 0;
-      background: hsl(220, 25%, 8%);
+      background: var(--bg-card2);
       border-bottom: 1px solid var(--border);
       overflow: hidden;
       position: relative;
@@ -551,11 +551,11 @@
     }
     #live-ticker-section::before {
       left: 0;
-      background: linear-gradient(to right, hsl(220, 25%, 8%), transparent);
+      background: linear-gradient(to right, var(--bg-card2), transparent);
     }
     #live-ticker-section::after {
       right: 0;
-      background: linear-gradient(to left, hsl(220, 25%, 8%), transparent);
+      background: linear-gradient(to left, var(--bg-card2), transparent);
     }
 
     .ticker-wrapper {
@@ -717,6 +717,15 @@
   </button>
 </nav>
 
+<!-- LIVE TICKER -->
+<section id="live-ticker-section">
+  <div class="ticker-wrapper">
+    <div class="ticker-track" id="live-ticker-container">
+      <!-- Dynamically updated -->
+    </div>
+  </div>
+</section>
+
 <!-- HERO -->
 <section class="hero" id="home">
   <div class="hero-bg"></div>
@@ -737,16 +746,6 @@
     </div>
   </div>
 </section>
-
-<!-- LIVE TICKER -->
-<section id="live-ticker-section">
-  <div class="ticker-wrapper">
-    <div class="ticker-track" id="live-ticker-container">
-      <!-- Dynamically updated -->
-    </div>
-  </div>
-</section>
-
 <!-- DYNAMIC OFFERS (from Firebase) -->
 <section id="offers-section">
   <div class="section-header reveal">
