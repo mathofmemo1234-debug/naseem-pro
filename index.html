@@ -1544,8 +1544,8 @@
   const playIcon = document.getElementById('audio-icon-play');
   const muteIcon = document.getElementById('audio-icon-mute');
 
-  // Load user preference or default to playing (unmuted)
-  let isMuted = localStorage.getItem('bg-audio-muted') === 'true';
+  // Always start unmuted (intent to play) on every page refresh
+  let isMuted = false;
 
   function updateAudioUI() {
     if (isMuted) {
@@ -1592,13 +1592,11 @@
     if (audio.paused) {
       audio.play().then(() => {
         isMuted = false;
-        localStorage.setItem('bg-audio-muted', 'false');
         updateAudioUI();
       }).catch(err => console.error(err));
     } else {
       audio.pause();
       isMuted = true;
-      localStorage.setItem('bg-audio-muted', 'true');
       updateAudioUI();
     }
   }
