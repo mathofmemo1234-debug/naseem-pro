@@ -245,7 +245,7 @@
         <form id="offer-form" onsubmit="addOffer(event)">
           <div class="form-row">
             <div><label class="form-label">عنوان العرض *</label><input type="text" class="form-input" id="offer-title" placeholder="مثال: عرض غسيل 3 مكيفات" required /></div>
-            <div><label class="form-label">رابط الصورة</label><input type="url" class="form-input" id="offer-image" placeholder="https://... (اختياري)" /></div>
+            <div><label class="form-label">صورة العرض *</label><input type="file" class="form-input" id="offer-image-file" accept="image/*" required /></div>
           </div>
           <div class="form-row full">
             <div><label class="form-label">وصف العرض *</label><textarea class="form-input" id="offer-desc" placeholder="تفاصيل العرض..." required></textarea></div>
@@ -282,6 +282,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
 
 <script>
   // ===== Firebase Config =====
@@ -352,23 +353,50 @@
   }
 
   // ===== OFFERS =====
-  function addOffer(e) {
+  async function addOffer(e) {
     e.preventDefault();
-    const offer = {
-      title: document.getElementById('offer-title').value,
-      description: document.getElementById('offer-desc').value,
-      price: document.getElementById('offer-price').value,
-      oldPrice: document.getElementById('offer-old-price').value || '',
-      imageUrl: document.getElementById('offer-image').value || '',
-      active: true,
-      createdAt: Date.now()
-    };
-    db.ref('offers').push(offer)
-      .then(() => {
-        showToast('✅ تم نشر العرض بنجاح!');
-        document.getElementById('offer-form').reset();
-      })
-      .catch(() => showToast('❌ حدث خطأ', 'error'));
+    const btn = e.target.querySelector('button[type="submit"]');
+    const originalText = btn.innerHTML;
+    
+    const file = document.getElementById('offer-image-file').files[0];
+    if (!file) {
+      showToast('❌ يرجى اختيار صورة للعرض', 'error');
+      return;
+    }
+
+    btn.innerHTML = '⏳ جاري رفع الصورة...';
+    btn.disabled = true;
+
+    try {
+      // 1. Upload image to Firebase Storage
+      const storageRef = firebase.storage().ref();
+      const fileRef = storageRef.child('offers/' + Date.now() + '_' + file.name);
+      
+      const snapshot = await fileRef.put(file);
+      const imageUrl = await snapshot.ref.getDownloadURL();
+
+      // 2. Save offer in Database
+      const offer = {
+        title: document.getElementById('offer-title').value,
+        description: document.getElementById('offer-desc').value,
+        price: document.getElementById('offer-price').value,
+        oldPrice: document.getElementById('offer-old-price').value || '',
+        imageUrl: imageUrl,
+        active: true,
+        createdAt: Date.now()
+      };
+
+      await db.ref('offers').push(offer);
+      
+      showToast('✅ تم نشر العرض بنجاح!');
+      document.getElementById('offer-form').reset();
+    } catch (error) {
+      console.error(error);
+      showToast('❌ حدث خطأ أثناء الرفع أو الحفظ', 'error');
+    } finally {
+      btn.innerHTML = originalText;
+      btn.disabled = false;
+    }
   }
 
   function deleteOffer(id) {
