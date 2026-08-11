@@ -531,6 +531,85 @@
     }
     .audio-float:hover .audio-tooltip { opacity: 1; transform: translateY(0); }
 
+    /* Live Ticker Section */
+    #live-ticker-section {
+      padding: 0.9rem 0;
+      background: hsl(220, 25%, 8%);
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+      position: relative;
+      width: 100%;
+    }
+    #live-ticker-section::before, #live-ticker-section::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      width: 100px;
+      height: 100%;
+      z-index: 2;
+      pointer-events: none;
+    }
+    #live-ticker-section::before {
+      left: 0;
+      background: linear-gradient(to right, hsl(220, 25%, 8%), transparent);
+    }
+    #live-ticker-section::after {
+      right: 0;
+      background: linear-gradient(to left, hsl(220, 25%, 8%), transparent);
+    }
+
+    .ticker-wrapper {
+      overflow: hidden;
+      width: 100%;
+      direction: ltr; /* Force horizontal track layout in LTR so it translates LTR natively */
+    }
+
+    .ticker-track {
+      display: flex;
+      flex-direction: row;
+      width: max-content;
+      gap: 2rem;
+      animation: ticker-scroll 50s linear infinite;
+      direction: rtl; /* Align text within elements to RTL */
+    }
+    .ticker-track:hover {
+      animation-play-state: paused;
+    }
+
+    .ticker-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 0.5rem 1.1rem;
+      border-radius: 30px;
+      color: var(--text-primary);
+      font-size: 0.85rem;
+      font-weight: 700;
+      white-space: nowrap;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      transition: border-color 0.3s;
+    }
+    .ticker-item:hover {
+      border-color: var(--accent);
+    }
+
+    .ticker-badge {
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 0.15rem 0.5rem;
+      border-radius: 20px;
+    }
+    .badge-offer { background: rgba(0, 168, 232, 0.15); color: var(--accent); }
+    .badge-product { background: rgba(16, 185, 129, 0.15); color: var(--green); }
+    .badge-review { background: rgba(245, 158, 11, 0.15); color: var(--yellow); }
+
+    @keyframes ticker-scroll {
+      0% { transform: translate3d(0, 0, 0); }
+      100% { transform: translate3d(-50%, 0, 0); }
+    }
+
     /* Animations */
     @keyframes fadeInUp { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
     @keyframes fadeInDown { from { opacity:0; transform:translateY(-20px); } to { opacity:1; transform:translateY(0); } }
@@ -655,6 +734,15 @@
       <div class="stat"><div class="stat-num">+10</div><div class="stat-label">سنوات خبرة</div></div>
       <div class="stat"><div class="stat-num">98%</div><div class="stat-label">معدل الرضا</div></div>
       <div class="stat"><div class="stat-num">24/7</div><div class="stat-label">دعم متواصل</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- LIVE TICKER -->
+<section id="live-ticker-section">
+  <div class="ticker-wrapper">
+    <div class="ticker-track" id="live-ticker-container">
+      <!-- Dynamically updated -->
     </div>
   </div>
 </section>
@@ -1041,6 +1129,73 @@
   firebase.initializeApp(fbConfig);
   const fbDb = firebase.database();
 
+  // ===== Live Ticker Controller =====
+  let localOffers = [];
+  let localProducts = [];
+  let localReviews = [];
+
+  const defaultReviewsForTicker = [
+    { name: "أحمد محمد السالم", text: "خدمة ممتازة جداً وعمل بكل احترافية.", createdAt: 1786245225000, type: 'review' },
+    { name: "منال عبدالله الحربي", text: "الأسعار معقولة جداً والخدمة سريعة.", createdAt: 1786245224000, type: 'review' },
+    { name: "خالد عمر الغامدي", text: "صيانة دورية ممتازة وفريق محترف.", createdAt: 1786245223000, type: 'review' }
+  ];
+
+  function updateLiveTicker() {
+    const items = [];
+
+    // Add offers
+    localOffers.forEach(o => {
+      items.push({
+        type: 'offer',
+        title: `🔥 عرض خاص: ${o.title} بسعر ${o.price} ريال`,
+        createdAt: o.createdAt || Date.now()
+      });
+    });
+
+    // Add products
+    localProducts.forEach(p => {
+      items.push({
+        type: 'product',
+        title: `📦 منتج جديد: ${p.name} - ${p.price} ر.س`,
+        createdAt: p.createdAt || Date.now()
+      });
+    });
+
+    // Add reviews
+    const combinedReviews = [...localReviews, ...defaultReviewsForTicker];
+    combinedReviews.forEach(r => {
+      items.push({
+        type: 'review',
+        title: `💬 رأي عميل (${r.name}): "${r.text}"`,
+        createdAt: r.createdAt || Date.now()
+      });
+    });
+
+    // Sort descending (newest first)
+    items.sort((a, b) => b.createdAt - a.createdAt);
+
+    const container = document.getElementById('live-ticker-container');
+    if (items.length === 0 || !container) return;
+
+    const htmlString = items.map(item => {
+      let badgeClass = '';
+      let badgeText = '';
+      if (item.type === 'offer') { badgeClass = 'badge-offer'; badgeText = 'عرض'; }
+      else if (item.type === 'product') { badgeClass = 'badge-product'; badgeText = 'منتج'; }
+      else if (item.type === 'review') { badgeClass = 'badge-review'; badgeText = 'رأي'; }
+
+      return `
+        <div class="ticker-item">
+          <span class="ticker-badge ${badgeClass}">${badgeText}</span>
+          <span class="ticker-text">${item.title}</span>
+        </div>
+      `;
+    }).join('');
+
+    // Duplicate for infinite marquee
+    container.innerHTML = htmlString + htmlString;
+  }
+
   // ===== Load Dynamic Offers =====
   fbDb.ref('offers').orderByChild('createdAt').on('value', snap => {
     const data = snap.val();
@@ -1048,11 +1203,23 @@
     const container = document.getElementById('offers-container');
     if (!data || Object.keys(data).length === 0) {
       section.style.display = 'none';
+      localOffers = [];
+      updateLiveTicker();
       return;
     }
     section.style.display = 'block';
     const entries = Object.entries(data).filter(([,o]) => o.active !== false).reverse();
-    if (entries.length === 0) { section.style.display = 'none'; return; }
+    if (entries.length === 0) { 
+      section.style.display = 'none'; 
+      localOffers = [];
+      updateLiveTicker();
+      return; 
+    }
+    
+    // Update live ticker array
+    localOffers = entries.map(([id, o]) => o);
+    updateLiveTicker();
+
     container.innerHTML = entries.map(([id, o]) => {
       const discount = o.oldPrice ? Math.round((1 - o.price / o.oldPrice) * 100) : 0;
       return `
@@ -1080,9 +1247,16 @@
     const container = document.getElementById('products-container');
     if (!data || Object.keys(data).length === 0) {
       container.innerHTML = defaultProductsHTML;
+      localProducts = [];
+      updateLiveTicker();
       return;
     }
     const entries = Object.entries(data).reverse();
+    
+    // Update live ticker array
+    localProducts = entries.map(([id, p]) => p);
+    updateLiveTicker();
+
     container.innerHTML = entries.map(([id, p]) => {
       const tags = p.features ? p.features.split(',').map(f => `<span class="feature-tag">${f.trim()}</span>`).join('') : '';
       return `
@@ -1110,8 +1284,18 @@
   fbDb.ref('reviews').orderByChild('approved').equalTo(true).on('value', snap => {
     const data = snap.val();
     const container = document.getElementById('dynamic-reviews-container');
-    if (!data) { container.innerHTML = ''; return; }
+    if (!data) { 
+      container.innerHTML = ''; 
+      localReviews = [];
+      updateLiveTicker();
+      return; 
+    }
     const entries = Object.entries(data).reverse();
+    
+    // Update live ticker array
+    localReviews = entries.map(([id, r]) => r);
+    updateLiveTicker();
+
     container.innerHTML = entries.map(([id, r]) => `
       <div class="review-card reveal visible">
         <div class="review-quote">"</div>
