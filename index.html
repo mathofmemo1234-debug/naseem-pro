@@ -1349,38 +1349,68 @@
   const audio = document.getElementById('bg-audio');
   const audioBtn = document.getElementById('audio-toggle-btn');
   const audioIcon = audioBtn.querySelector('.audio-icon');
-  let isPlaying = false;
 
-  function toggleAudio() {
-    if (isPlaying) {
-      audio.pause();
+  // Load user preference or default to playing (unmuted)
+  let isMuted = localStorage.getItem('bg-audio-muted') === 'true';
+
+  function updateAudioUI() {
+    if (isMuted) {
       audioIcon.textContent = '🔇';
       audioBtn.classList.remove('playing');
-      isPlaying = false;
     } else {
+      audioIcon.textContent = '🔊';
+      audioBtn.classList.add('playing');
+    }
+  }
+
+  // Set initial UI state
+  updateAudioUI();
+
+  // Try to autoplay
+  function attemptPlay() {
+    if (!isMuted) {
       audio.play().then(() => {
-        audioIcon.textContent = '🔊';
-        audioBtn.classList.add('playing');
-        isPlaying = true;
+        console.log("Audio playing successfully.");
       }).catch(err => {
-        console.log("Audio play blocked. User interaction required.", err);
-        // Fallback: If blocked, try to play on next click anywhere
-        document.body.addEventListener('click', forcePlayOnce, { once: true });
+        console.log("Autoplay blocked. Waiting for user interaction to play.");
+        // Add one-time listener to document to play on first interaction
+        document.addEventListener('click', forcePlayOnce, { once: true });
+        document.addEventListener('touchstart', forcePlayOnce, { once: true });
       });
     }
   }
 
   function forcePlayOnce() {
-    if (!isPlaying) {
+    if (!isMuted) {
       audio.play().then(() => {
-        audioIcon.textContent = '🔊';
-        audioBtn.classList.add('playing');
-        isPlaying = true;
-      }).catch(err => console.log("Failed to autoplay on interaction.", err));
+        updateAudioUI();
+      }).catch(err => console.log("Play failed on interaction.", err));
     }
   }
 
-  audioBtn.addEventListener('click', toggleAudio);
+  // Start attempt immediately and on DOMContentLoaded
+  attemptPlay();
+  window.addEventListener('DOMContentLoaded', attemptPlay);
+
+  function toggleAudio() {
+    if (audio.paused) {
+      audio.play().then(() => {
+        isMuted = false;
+        localStorage.setItem('bg-audio-muted', 'false');
+        updateAudioUI();
+      }).catch(err => console.error(err));
+    } else {
+      audio.pause();
+      isMuted = true;
+      localStorage.setItem('bg-audio-muted', 'true');
+      updateAudioUI();
+    }
+  }
+
+  audioBtn.addEventListener('click', (e) => {
+    e.stopPropagation(); // Prevent triggering forcePlayOnce if clicked the button
+    toggleAudio();
+  });
 
 </script>
 </body>
