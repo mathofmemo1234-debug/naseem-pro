@@ -424,25 +424,50 @@
     #reviews { background: var(--bg-card); }
     .reviews-grid {
       display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.5rem; max-width: 1200px; margin: 0 auto;
+      gap: 1.8rem; max-width: 1200px; margin: 0 auto;
     }
     .review-card {
       background: var(--bg-dark); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 1.8rem; position: relative;
-      transition: transform 0.4s, box-shadow 0.4s, border-color 0.4s;
+      border-radius: var(--radius); padding: 2rem; position: relative;
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
     }
-    .review-card:hover { transform: translateY(-6px); box-shadow: 0 20px 50px rgba(0,0,0,0.4); border-color: rgba(0,168,232,0.3); }
-    .review-quote { position: absolute; top: 1.2rem; left: 1.5rem; font-size: 3rem; line-height: 1; color: var(--primary); opacity: 0.2; font-family: serif; }
-    .review-stars { display: flex; gap: 0.2rem; margin-bottom: 0.8rem; color: var(--gold); font-size: 1.1rem; }
-    .review-text { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.8; margin-bottom: 1.2rem; }
-    .reviewer { display: flex; align-items: center; gap: 0.8rem; border-top: 1px solid var(--border); padding-top: 1rem; }
+    .review-card::before {
+      content: ''; position: absolute; top: 0; right: 0; left: 0; height: 3px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0; transition: opacity 0.4s ease;
+    }
+    .review-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 20px 45px rgba(0,168,232,0.18), 0 5px 15px rgba(0,0,0,0.08);
+      border-color: rgba(0,168,232,0.4);
+    }
+    .review-card:hover::before { opacity: 1; }
+    .review-quote {
+      position: absolute; top: 1rem; left: 1.2rem;
+      font-size: 3.5rem; line-height: 1; color: var(--accent);
+      opacity: 0.15; font-family: serif; pointer-events: none;
+      transition: opacity 0.3s, transform 0.3s;
+    }
+    .review-card:hover .review-quote { opacity: 0.3; transform: scale(1.1); }
+    .review-stars {
+      display: flex; gap: 0.25rem; margin-bottom: 0.9rem;
+      color: #f59e0b; font-size: 1.15rem;
+      filter: drop-shadow(0 0 6px rgba(245,158,11,0.35));
+    }
+    .review-text { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.8; margin-bottom: 1.4rem; }
+    .reviewer { display: flex; align-items: center; gap: 0.9rem; border-top: 1px solid var(--border); padding-top: 1.1rem; }
     .reviewer-avatar {
-      width: 44px; height: 44px; border-radius: 50%;
+      width: 46px; height: 46px; border-radius: 50%;
       background: linear-gradient(135deg, var(--primary), var(--accent));
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 800; font-size: 1rem; flex-shrink: 0;
+      color: white; display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 1.05rem; flex-shrink: 0;
+      box-shadow: 0 4px 15px rgba(0,168,232,0.3);
+      border: 2px solid rgba(255,255,255,0.25);
     }
-    .reviewer-name { font-weight: 700; font-size: 0.95rem; }
+    .reviewer-name { font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; gap: 0.4rem; }
+    .reviewer-name::after { content: '✓'; display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; background: #10b981; color: white; border-radius: 50%; font-size: 10px; }
     .reviewer-role { font-size: 0.8rem; color: var(--text-muted); }
 
     /* Used AC */
@@ -732,7 +757,7 @@
 <section class="hero" id="home">
   <div class="hero-bg"></div>
   <div class="hero-glow"></div>
-  <div class="hero-content">
+  <div class="hero-content" data-aos="fade-up" data-aos-duration="1000">
     <div class="hero-badge">🤫 لا ندعي أننا الأفضل — فقط نعمل في صمت</div>
     <h1>راحتك أولويتنا<br/><span class="highlight">نسيم برو للتكييف</span></h1>
     <p>متجرك المتكامل لبيع وشراء وصيانة وغسيل مكيفات الهواء بأعلى جودة وأفضل الأسعار في جدة</p>
@@ -750,7 +775,7 @@
 </section>
 <!-- DYNAMIC OFFERS (from Firebase) -->
 <section id="offers-section">
-  <div class="section-header reveal">
+  <div class="section-header" data-aos="fade-up">
     <div class="section-tag">🔥 العروض الحصرية</div>
     <h2 class="section-title">عروض <span>نسيم برو</span> الحالية</h2>
     <p class="section-subtitle">لا تفوّت عروضنا المحدودة — احجز الآن واستفد من التخفيضات!</p>
@@ -761,7 +786,7 @@
 
 <!-- PRODUCTS -->
 <section id="products">
-  <div class="section-header reveal">
+  <div class="section-header" data-aos="fade-up">
     <div class="section-tag">🛍️ منتجاتنا</div>
     <h2 class="section-title">أفضل <span>المكيفات</span> بأفضل الأسعار في جدة</h2>
     <p class="section-subtitle">نوفر أحدث موديلات مكيفات السبليت والشباك من أشهر الماركات العالمية</p>
@@ -837,22 +862,22 @@
 <!-- SERVICES -->
 <section id="services">
   <div class="services-container">
-    <div class="services-img reveal">
+    <div class="services-img" data-aos="fade-left" data-aos-duration="900">
       <img src="ac_cleaning_service_1786245244936.jpg" alt="فني صيانة وغسيل مكيفات محترف في جدة" />
     </div>
     <div>
-      <div class="section-header" style="text-align:right;margin-bottom:2rem;">
+      <div class="section-header" style="text-align:right;margin-bottom:2rem;" data-aos="fade-up">
         <div class="section-tag">🔧 خدماتنا في جدة</div>
         <h2 class="section-title">خدمات <span>احترافية</span> متكاملة في جدة</h2>
         <p class="section-subtitle" style="margin:0;text-align:right;">فريق من المتخصصين المحترفين لخدمتك في جميع أحياء جدة على مدار اليوم</p>
         <div class="divider" style="margin:1rem 0 0;"></div>
       </div>
-      <div class="service-cards reveal">
-        <div class="service-card"><div class="service-icon">🧼</div><div class="service-info"><h3>غسيل وتنظيف المكيفات</h3><p>غسيل شامل للفلاتر والكويل وجسم الوحدة بمواد معتمدة</p></div></div>
-        <div class="service-card"><div class="service-icon">🔧</div><div class="service-info"><h3>صيانة وإصلاح</h3><p>إصلاح جميع أعطال المكيفات بضمان على قطع الغيار والعمالة</p></div></div>
-        <div class="service-card"><div class="service-icon">🏗️</div><div class="service-info"><h3>تركيب المكيفات</h3><p>تركيب احترافي لجميع أنواع المكيفات مع ضمان التركيب</p></div></div>
-        <div class="service-card"><div class="service-icon">❄️</div><div class="service-info"><h3>تعبئة الغاز</h3><p>تعبئة غاز التبريد بالكميات الصحيحة لأداء مثالي</p></div></div>
-        <div class="service-card"><div class="service-icon">📋</div><div class="service-info"><h3>عقود صيانة دورية</h3><p>عقود سنوية للمنازل والشركات بأسعار مميزة ومتابعة منتظمة</p></div></div>
+      <div class="service-cards">
+        <div class="service-card" data-aos="fade-right" data-aos-delay="0"><div class="service-icon">🧼</div><div class="service-info"><h3>غسيل وتنظيف المكيفات</h3><p>غسيل شامل للفلاتر والكويل وجسم الوحدة بمواد معتمدة</p></div></div>
+        <div class="service-card" data-aos="fade-right" data-aos-delay="100"><div class="service-icon">🔧</div><div class="service-info"><h3>صيانة وإصلاح</h3><p>إصلاح جميع أعطال المكيفات بضمان على قطع الغيار والعمالة</p></div></div>
+        <div class="service-card" data-aos="fade-right" data-aos-delay="200"><div class="service-icon">🏗️</div><div class="service-info"><h3>تركيب المكيفات</h3><p>تركيب احترافي لجميع أنواع المكيفات مع ضمان التركيب</p></div></div>
+        <div class="service-card" data-aos="fade-right" data-aos-delay="300"><div class="service-icon">❄️</div><div class="service-info"><h3>تعبئة الغاز</h3><p>تعبئة غاز التبريد بالكميات الصحيحة لأداء مثالي</p></div></div>
+        <div class="service-card" data-aos="fade-right" data-aos-delay="400"><div class="service-icon">📋</div><div class="service-info"><h3>عقود صيانة دورية</h3><p>عقود سنوية للمنازل والشركات بأسعار مميزة ومتابعة منتظمة</p></div></div>
       </div>
     </div>
   </div>
@@ -861,13 +886,13 @@
 <!-- BOOKING -->
 <section id="booking">
   <div class="booking-wrapper">
-    <div class="section-header reveal">
+    <div class="section-header" data-aos="fade-up">
       <div class="section-tag">📅 احجز الآن</div>
       <h2 class="section-title">احجز خدمة <span>غسيل المكيف</span> في جدة</h2>
       <p class="section-subtitle">اختر نوع المكيف وعدد الوحدات وحيك في جدة وسنتواصل معك لتحديد الموعد المناسب</p>
       <div class="divider"></div>
     </div>
-    <div class="booking-form reveal">
+    <div class="booking-form" data-aos="zoom-in-up" data-aos-duration="800">
       <form id="booking-form" onsubmit="handleBooking(event)">
         <div class="form-grid">
           <div class="form-group">
@@ -935,44 +960,44 @@
 
 <!-- REVIEWS -->
 <section id="reviews">
-  <div class="section-header reveal">
+  <div class="section-header" data-aos="fade-up">
     <div class="section-tag">⭐ آراء العملاء</div>
     <h2 class="section-title">ماذا يقول <span>عملاؤنا</span> في جدة</h2>
     <p class="section-subtitle">أكثر من 5,000 عميل سعيد في جدة يثق بخدمات نسيم برو</p>
     <div class="divider"></div>
   </div>
   <div class="reviews-grid">
-    <div class="review-card reveal">
+    <div class="review-card" data-aos="fade-up" data-aos-delay="0">
       <div class="review-quote">"</div>
       <div class="review-stars">★★★★★</div>
       <p class="review-text">خدمة ممتازة جداً! الفني جاء في الوقت المحدد وعمل بكل احترافية. المكيف الآن يعمل كأنه جديد. سأوصي بنسيم برو لكل أهلي وأصحابي بلا تردد.</p>
       <div class="reviewer"><div class="reviewer-avatar">أ</div><div><div class="reviewer-name">أحمد محمد السالم</div><div class="reviewer-role">عميل · جدة (حي الشاطئ)</div></div></div>
     </div>
-    <div class="review-card reveal">
+    <div class="review-card" data-aos="fade-up" data-aos-delay="100">
       <div class="review-quote">"</div>
       <div class="review-stars">★★★★★</div>
       <p class="review-text">اشتريت مكيف سبليت وقمت بتركيبه معهم. الأسعار معقولة جداً والخدمة سريعة. الموظفون محترمون ومتعاونون. تجربة رائعة من البداية للنهاية!</p>
       <div class="reviewer"><div class="reviewer-avatar">م</div><div><div class="reviewer-name">منال عبدالله الحربي</div><div class="reviewer-role">عميلة · جدة (حي الصفا)</div></div></div>
     </div>
-    <div class="review-card reveal">
+    <div class="review-card" data-aos="fade-up" data-aos-delay="200">
       <div class="review-quote">"</div>
       <div class="review-stars">★★★★★</div>
       <p class="review-text">عندي 5 مكيفات في الشركة، تعاقدت معهم على صيانة دورية. أفضل قرار اتخذته! لا مشاكل، لا تأخير، وفريقهم محترف ومنظم جداً.</p>
       <div class="reviewer"><div class="reviewer-avatar">خ</div><div><div class="reviewer-name">خالد عمر الغامدي</div><div class="reviewer-role">صاحب شركة · جدة (حي الروضة)</div></div></div>
     </div>
-    <div class="review-card reveal">
+    <div class="review-card" data-aos="fade-up" data-aos-delay="300">
       <div class="review-quote">"</div>
       <div class="review-stars">★★★★☆</div>
       <p class="review-text">اشتريت مكيف مستعمل بسعر ممتاز وكان بحالة جيدة جداً. يستاهل الثقة. الخدمة كانت ممتازة والتجاوب سريع.</p>
       <div class="reviewer"><div class="reviewer-avatar">ف</div><div><div class="reviewer-name">فاطمة علي الزهراني</div><div class="reviewer-role">عميلة · جدة (حي الحمراء)</div></div></div>
     </div>
-    <div class="review-card reveal">
+    <div class="review-card" data-aos="fade-up" data-aos-delay="400">
       <div class="review-quote">"</div>
       <div class="review-stars">★★★★★</div>
       <p class="review-text">تعبئة الغاز كانت بسعر معقول جداً وسريعة. الفني شرح لي كل شيء وأعطاني نصائح مفيدة لصيانة المكيف. شكراً جزيلاً لفريق نسيم برو!</p>
       <div class="reviewer"><div class="reviewer-avatar">ع</div><div><div class="reviewer-name">عبدالرحمن ناصر القرني</div><div class="reviewer-role">عميل · جدة (حي الحمدانية)</div></div></div>
     </div>
-    <div class="review-card reveal">
+    <div class="review-card" data-aos="fade-up" data-aos-delay="500">
       <div class="review-quote">"</div>
       <div class="review-stars">★★★★★</div>
       <p class="review-text">بعت مكيفي القديم وشريت واحد جديد منهم. الصفقة كانت عادلة والتعامل محترم. نظام البيع والشراء للمستعمل فكرة ذكية توفر وقت ومجهود كبير.</p>
@@ -984,7 +1009,7 @@
   <div class="dynamic-reviews-grid" id="dynamic-reviews-container"></div>
 
   <!-- Customer Review Form -->
-  <div class="review-form-card reveal" id="review-form-card">
+  <div class="review-form-card" data-aos="fade-up" id="review-form-card">
     <h3>✍️ شاركنا رأيك في خدمتنا</h3>
     <form id="customer-review-form">
       <input type="text" class="review-form-input" id="review-name" placeholder="اسمك الكريم *" required />
@@ -1221,10 +1246,11 @@
     localOffers = entries.map(([id, o]) => o);
     updateLiveTicker();
 
-    container.innerHTML = entries.map(([id, o]) => {
+    container.innerHTML = entries.map(([id, o], idx) => {
       const discount = o.oldPrice ? Math.round((1 - o.price / o.oldPrice) * 100) : 0;
+      const delay = idx * 150;
       return `
-        <div class="offer-card reveal visible">
+        <div class="offer-card" data-aos="zoom-in-up" data-aos-delay="${delay}">
           ${discount > 0 ? `<div class="offer-badge">خصم ${discount}%</div>` : ''}
           ${o.imageUrl ? `<img class="offer-card-img" src="${o.imageUrl}" alt="${o.title}" onerror="this.style.display='none'" />` : ''}
           <div class="offer-card-body">
@@ -1238,6 +1264,7 @@
         </div>
       `;
     }).join('');
+    if (typeof AOS !== 'undefined') { AOS.refresh(); }
   });
 
   // ===== Load Dynamic Products =====
@@ -1292,6 +1319,7 @@
       container.innerHTML = ''; 
       localReviews = [];
       updateLiveTicker();
+      if (typeof AOS !== 'undefined') { AOS.refresh(); }
       return; 
     }
     const entries = Object.entries(data).reverse();
@@ -1300,20 +1328,24 @@
     localReviews = entries.map(([id, r]) => r);
     updateLiveTicker();
 
-    container.innerHTML = entries.map(([id, r]) => `
-      <div class="review-card reveal visible">
-        <div class="review-quote">"</div>
-        <div class="review-stars">${'★'.repeat(r.stars)}${'☆'.repeat(5 - r.stars)}</div>
-        <p class="review-text">${r.text}</p>
-        <div class="reviewer">
-          <div class="reviewer-avatar">${r.name.charAt(0)}</div>
-          <div>
-            <div class="reviewer-name">${r.name}</div>
-            <div class="reviewer-role">عميل · جدة</div>
+    container.innerHTML = entries.map(([id, r], idx) => {
+      const delay = (idx % 6) * 100;
+      return `
+        <div class="review-card" data-aos="fade-up" data-aos-delay="${delay}">
+          <div class="review-quote">"</div>
+          <div class="review-stars">${'★'.repeat(r.stars)}${'☆'.repeat(5 - r.stars)}</div>
+          <p class="review-text">${r.text}</p>
+          <div class="reviewer">
+            <div class="reviewer-avatar">${r.name.charAt(0)}</div>
+            <div>
+              <div class="reviewer-name">${r.name}</div>
+              <div class="reviewer-role">عميل · جدة</div>
+            </div>
           </div>
         </div>
-      </div>
-    `).join('');
+      `;
+    }).join('');
+    if (typeof AOS !== 'undefined') { AOS.refresh(); }
   });
 
   // ===== Star Picker =====
@@ -1614,12 +1646,12 @@
 </script>
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
-  // تفعيل المكتبة مع إعدادات تضمن حركة ناعمة جداً
+  // تفعيل مكتبة الحركات التفاعلية AOS
   AOS.init({
-    duration: 800,       // مدة الحركة (0.8 ثانية)
-    easing: 'ease-in-out', // انسيابية الحركة
-    once: true,          // تشغيل الحركة مرة واحدة فقط عند التمرير
-    offset: 100          // بدء الحركة قبل ظهور العنصر بـ 100 بيكسل
+    duration: 850,
+    easing: 'ease-out-cubic',
+    once: true,
+    offset: 60
   });
 </script>
 </body>
