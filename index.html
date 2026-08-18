@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
   <style>
     /* ===== DESIGN TOKENS — DARK (default) ===== */
     :root {
@@ -267,12 +268,13 @@
     .product-card {
       background: var(--bg-card); border: 1px solid var(--border);
       border-radius: var(--radius); overflow: hidden;
-      transition: transform 0.4s cubic-bezier(0.175,0.885,0.32,1.275), box-shadow 0.4s, border-color 0.4s;
+      transition: all 0.3s ease;
       cursor: pointer;
     }
     .product-card:hover {
-      transform: translateY(-10px) scale(1.02);
-      box-shadow: 0 30px 70px rgba(0,168,232,0.2); border-color: var(--primary);
+      transform: translateY(-10px);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.15), 0 0 25px rgba(0,168,232,0.2);
+      border-color: var(--primary);
     }
     .product-img { height: 240px; overflow: hidden; position: relative; }
     .product-img img { transition: transform 0.5s ease; }
@@ -766,7 +768,7 @@
     <div class="divider"></div>
   </div>
   <div class="products-grid" id="products-container">
-    <div class="product-card reveal">
+    <div class="product-card" data-aos="fade-up" data-aos-delay="0">
       <div class="product-img">
         <img src="split_ac_unit_1786245225871.jpg" alt="مكيف سبليت حائطي" />
         <div class="product-badge">⚡ الأكثر مبيعاً</div>
@@ -787,7 +789,7 @@
         </div>
       </div>
     </div>
-    <div class="product-card reveal">
+    <div class="product-card" data-aos="fade-up" data-aos-delay="150">
       <div class="product-img">
         <img src="window_ac_unit_1786245234743.jpg" alt="مكيف شباك كلاسيك" />
         <div class="product-badge">💰 اقتصادي</div>
@@ -808,7 +810,7 @@
         </div>
       </div>
     </div>
-    <div class="product-card reveal">
+    <div class="product-card" data-aos="fade-up" data-aos-delay="300">
       <div class="product-img" style="height:240px;background:linear-gradient(135deg,hsl(215,50%,12%),hsl(195,60%,10%));display:flex;align-items:center;justify-content:center;font-size:5rem;">
         🌬️
         <div class="product-badge">🆕 جديد</div>
@@ -1006,26 +1008,26 @@
 
 <!-- USED AC -->
 <section id="used-ac">
-  <div class="section-header reveal">
+  <div class="section-header" data-aos="fade-up">
     <div class="section-tag">♻️ السوق المستعمل</div>
     <h2 class="section-title">بيع وشراء <span>المكيفات المستعملة</span> في جدة</h2>
     <p class="section-subtitle">منصة موثوقة للبيع والشراء بأسعار عادلة مع ضمان الجودة داخل جدة</p>
     <div class="divider"></div>
   </div>
   <div class="marketplace-grid">
-    <div class="reveal">
+    <div data-aos="fade-left" data-aos-delay="0">
       <div class="marketplace-main-img">
         <img src="used_ac_store_1786245255463.jpg" alt="معرض مكيفات مستعملة" />
         <div class="marketplace-label">+200 وحدة متاحة الآن في جدة</div>
       </div>
       <div class="marketplace-mini-cards">
-        <div class="mini-card"><div class="mini-card-icon">✅</div><h4>مضمون 100%</h4><p>كل وحدة مفحوصة ومختبرة قبل البيع</p></div>
-        <div class="mini-card"><div class="mini-card-icon">💵</div><h4>أسعار عادلة</h4><p>تقييم فوري وسعر عادل لمكيفك</p></div>
-        <div class="mini-card"><div class="mini-card-icon">🚚</div><h4>توصيل مجاني</h4><p>توصيل وتركيب مجاني داخل جدة</p></div>
-        <div class="mini-card"><div class="mini-card-icon">🛡️</div><h4>ضمان 6 أشهر</h4><p>ضمان على الوحدات المستعملة</p></div>
+        <div class="mini-card" data-aos="fade-up" data-aos-delay="100"><div class="mini-card-icon">✅</div><h4>مضمون 100%</h4><p>كل وحدة مفحوصة ومختبرة قبل البيع</p></div>
+        <div class="mini-card" data-aos="fade-up" data-aos-delay="200"><div class="mini-card-icon">💵</div><h4>أسعار عادلة</h4><p>تقييم فوري وسعر عادل لمكيفك</p></div>
+        <div class="mini-card" data-aos="fade-up" data-aos-delay="300"><div class="mini-card-icon">🚚</div><h4>توصيل مجاني</h4><p>توصيل وتركيب مجاني داخل جدة</p></div>
+        <div class="mini-card" data-aos="fade-up" data-aos-delay="400"><div class="mini-card-icon">🛡️</div><h4>ضمان 6 أشهر</h4><p>ضمان على الوحدات المستعملة</p></div>
       </div>
     </div>
-    <div class="marketplace-form reveal">
+    <div class="marketplace-form" data-aos="fade-right" data-aos-delay="150">
       <h3>🔄 <span>تداول مكيفك في جدة</span></h3>
       <div class="action-tabs">
         <button class="action-tab active" id="tab-buy" onclick="switchTab('buy')">🛒 أريد الشراء</button>
@@ -1248,6 +1250,7 @@
       container.innerHTML = defaultProductsHTML;
       localProducts = [];
       updateLiveTicker();
+      if (typeof AOS !== 'undefined') { AOS.refresh(); }
       return;
     }
     const entries = Object.entries(data).reverse();
@@ -1256,10 +1259,11 @@
     localProducts = entries.map(([id, p]) => p);
     updateLiveTicker();
 
-    container.innerHTML = entries.map(([id, p]) => {
+    container.innerHTML = entries.map(([id, p], idx) => {
+      const delay = idx * 150;
       const tags = p.features ? p.features.split(',').map(f => `<span class="feature-tag">${f.trim()}</span>`).join('') : '';
       return `
-        <div class="product-card reveal visible">
+        <div class="product-card" data-aos="fade-up" data-aos-delay="${delay}">
           <div class="product-img">
             <img src="${p.imageUrl}" alt="${p.name}" />
             ${p.badge ? `<div class="product-badge">${p.badge}</div>` : ''}
@@ -1277,6 +1281,7 @@
         </div>
       `;
     }).join('');
+    if (typeof AOS !== 'undefined') { AOS.refresh(); }
   });
 
   // ===== Load Approved Reviews =====
@@ -1606,6 +1611,16 @@
     toggleAudio();
   });
 
+</script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+  // تفعيل المكتبة مع إعدادات تضمن حركة ناعمة جداً
+  AOS.init({
+    duration: 800,       // مدة الحركة (0.8 ثانية)
+    easing: 'ease-in-out', // انسيابية الحركة
+    once: true,          // تشغيل الحركة مرة واحدة فقط عند التمرير
+    offset: 100          // بدء الحركة قبل ظهور العنصر بـ 100 بيكسل
+  });
 </script>
 </body>
 </html>
